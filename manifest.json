@@ -19,6 +19,7 @@
     { "name": "Quick Fill: Quiet Minimal Placeholders", "command": "quick-fill-quiet" },
     { "name": "Quick Fill: Cyber & Sci-Fi Robots", "command": "quick-fill-cyber" },
     { "name": "Quick Fill: Pixel Mosaic Avatars", "command": "quick-fill-pixel" },
+    { "name": "Quick Fill: World Avatars (Diverse 3D)", "command": "quick-fill-world" },
     { "separator": true },
     { "name": "Instant Re-Shuffle Selection", "command": "quick-shuffle" },
     { "name": "Create Photo + Initials Component Set", "command": "quick-create-component" },

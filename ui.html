@@ -1670,7 +1670,18 @@ input:checked + .slider:before { transform: translateX(12px); }
               </div>
             </div>
 
-            <!-- Preset 13: Smart Mix -->
+            <!-- Preset 13: World Avatars -->
+            <div class="preset-card" data-preset="world">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/world-avatars/preview/world-avatars-001.jpg?cb=v2" alt="World Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">World</div>
+                <div class="preset-sub">Diverse 3D Portraits</div>
+              </div>
+            </div>
+
+            <!-- Preset 14: Smart Mix -->
             <div class="preset-card" data-preset="random">
               <div class="preset-thumb preset-thumb--mix">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/sculpted-avatars/preview/sculpted-avatars-001.jpg?cb=v2" alt="" loading="lazy">
@@ -1849,6 +1860,7 @@ input:checked + .slider:before { transform: translateX(12px); }
           <button class="cat-tab" data-cat="quiet">Quiet Avatars</button>
           <button class="cat-tab" data-cat="cyber">Cyber</button>
           <button class="cat-tab" data-cat="pixel">Pixel</button>
+          <button class="cat-tab" data-cat="world">World</button>
         </nav>
 
         <button class="nav-arrow-btn next" id="nav-arrow-next" title="Scroll right" aria-label="Next categories">
@@ -2229,7 +2241,8 @@ const REPO_COLLECTIONS = {
   company: { id: 'company-avatars', count: 100, name: 'Company Logos' },
   memoji: { id: 'memoji-avatars', count: 98, name: 'Memoji Avatars' },
   cyber: { id: 'cyber-avatars', count: 100, name: 'Cyber Avatars' },
-  pixel: { id: 'pixel-avatars', count: 100, name: 'Pixel Avatars' }
+  pixel: { id: 'pixel-avatars', count: 100, name: 'Pixel Avatars' },
+  world: { id: 'world-avatars', count: 26, name: 'World Avatars' }
 };
 
 function getRepoAvatarUrl(collectionKey, index, is4k = false) {
@@ -2656,7 +2669,7 @@ function renderGrid(cat) {
         const freshIdx = Math.floor(Math.random() * col.count) + 1;
         freshUrl = getRepoAvatarUrl(presetKey, freshIdx);
       } else {
-        const repoKeys = ['sculpted', 'office', 'illustrated', 'everyday', 'cartoon', 'doodles', 'abstract', 'quiet', 'company', 'memoji', 'cyber', 'pixel'];
+        const repoKeys = ['sculpted', 'office', 'illustrated', 'everyday', 'cartoon', 'doodles', 'abstract', 'quiet', 'company', 'memoji', 'cyber', 'pixel', 'world'];
         const randKey = repoKeys[Math.floor(Math.random() * repoKeys.length)];
         const col = REPO_COLLECTIONS[randKey];
         const freshIdx = Math.floor(Math.random() * col.count) + 1;
@@ -2948,6 +2961,7 @@ window.onmessage = (e) => {
     else if (msg.command === 'quick-fill-quiet' || msg.command === 'quick-fill-minimal') preset = 'quiet';
     else if (msg.command === 'quick-fill-cyber') preset = 'cyber';
     else if (msg.command === 'quick-fill-pixel') preset = 'pixel';
+    else if (msg.command === 'quick-fill-world') preset = 'world';
     else if (msg.command === 'quick-shuffle') preset = 'random';
 
     currentSelectionCount = msg.selectionCount || 0;
