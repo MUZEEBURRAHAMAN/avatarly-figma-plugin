@@ -559,7 +559,7 @@ html, body {
 
 .generator-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 6px;
 }
 
@@ -1946,18 +1946,6 @@ input:checked + .slider:before { transform: translateX(12px); }
                 </svg>
                 Insert 4-Avatar Stack
               </button>
-
-              <button class="secondary-btn" id="btn-create-component">
-                <!-- Duotone: Component -->
-                <svg viewBox="0 0 256 256">
-                  <rect x="32" y="32" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
-                  <rect x="32" y="32" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-                  <rect x="144" y="144" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
-                  <rect x="144" y="144" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-                  <polygon points="184 32 224 104 144 104 184 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
-                </svg>
-                Create Component Set
-              </button>
             </div>
 
             <!-- Engine Status & Offline Engine -->
@@ -3101,27 +3089,6 @@ document.getElementById('btn-insert-stack')?.addEventListener('click', () => {
   insertAvatarStack();
 });
 
-document.getElementById('btn-create-component')?.addEventListener('click', async () => {
-  try {
-    toast('Generating component set...');
-    const urls = generatePresetUrls(selectedPreset, activeFilter, 1);
-    const asset = await fetchAssetWithFallback(urls[0]);
-    parent.postMessage({
-      pluginMessage: {
-        type: 'create-dual-component',
-        items: [{
-          data: asset.data,
-          base64Png: asset.base64Png,
-          isSvg: asset.isSvg,
-          label: 'Avatar'
-        }]
-      }
-    }, '*');
-  } catch (err) {
-    toast('Failed to create component: ' + err.message);
-  }
-});
-
 /* ─────────────────────────────────────────────────── */
 /*  Component Set Builder (Components tab)             */
 /* ─────────────────────────────────────────────────── */
@@ -3145,18 +3112,17 @@ function updateCompNameCount() {
 compNameInput?.addEventListener('input', updateCompNameCount);
 updateCompNameCount();
 
-document.getElementById('btn-generate-component-set')?.addEventListener('click', async () => {
+async function runGenerateComponentSet(scope, name) {
   const btn = document.getElementById('btn-generate-component-set');
-  const name = (compNameInput?.value || 'User Avatar').trim() || 'User Avatar';
   try {
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     toast('Generating component set...');
     const urls = generatePresetUrls(selectedPreset, activeFilter, 1);
     const asset = await fetchAssetWithFallback(urls[0]);
     parent.postMessage({
       pluginMessage: {
         type: 'generate-component-set',
-        scope: selectedScope,
+        scope,
         name,
         item: {
           data: asset.data,
@@ -3169,8 +3135,13 @@ document.getElementById('btn-generate-component-set')?.addEventListener('click',
   } catch (err) {
     toast('Failed to create component set: ' + err.message);
   } finally {
-    btn.disabled = false;
+    if (btn) btn.disabled = false;
   }
+}
+
+document.getElementById('btn-generate-component-set')?.addEventListener('click', () => {
+  const name = (compNameInput?.value || 'User Avatar').trim() || 'User Avatar';
+  runGenerateComponentSet(selectedScope, name);
 });
 
 // Gallery Category Tabs (Popular, AI Portraits, Realistic, 3D, Memoji, etc.)
@@ -3233,7 +3204,7 @@ window.onmessage = (e) => {
     currentSelectionCount = msg.selectionCount || 0;
     
     if (msg.command === 'quick-create-component') {
-      document.getElementById('btn-create-component').click();
+      runGenerateComponentSet('both', 'User Avatar');
     } else {
       executeQuickFill(preset, true);
     }

@@ -286,92 +286,7 @@ function createBadgeAvatarFrame(item, badgeType = 'none', size = 80) {
   return frame;
 }
 
-// 🔤 2. Smart "Avatar-to-Initials" Dual Component Set Generator
-async function createPhotoInitialsComponentSet(item, persona = PERSONAS[0], size = 64) {
-  // 1. Ensure default Inter Regular is always loaded first
-  await figma.loadFontAsync({ family: "Inter", style: "Regular" }).catch(() => {});
-
-  let targetFont = { family: "Inter", style: "Regular" };
-
-  try {
-    await figma.loadFontAsync({ family: "Archivo", style: "Bold" });
-    targetFont = { family: "Archivo", style: "Bold" };
-  } catch {
-    try {
-      await figma.loadFontAsync({ family: "Inter", style: "Bold" });
-      targetFont = { family: "Inter", style: "Bold" };
-    } catch {
-      try {
-        await figma.loadFontAsync({ family: "Roboto", style: "Bold" });
-        targetFont = { family: "Roboto", style: "Bold" };
-      } catch (e) {
-        targetFont = { family: "Inter", style: "Regular" };
-      }
-    }
-  }
-
-  const compPhoto = figma.createComponent();
-  compPhoto.name = 'State=Photo';
-  compPhoto.resize(size, size);
-  compPhoto.fills = [];
-  compPhoto.cornerSmoothing = 1.0;
-
-  const ellipsePhoto = figma.createEllipse();
-  ellipsePhoto.name = 'Image';
-  ellipsePhoto.resize(size, size);
-  if (item.base64Png) {
-    const img = createImageFromBytes(item.base64Png);
-    ellipsePhoto.fills = [{ type: 'IMAGE', scaleMode: 'FILL', imageHash: img.hash }];
-  }
-  compPhoto.appendChild(ellipsePhoto);
-
-  const compInitials = figma.createComponent();
-  compInitials.name = 'State=Initials';
-  compInitials.resize(size, size);
-  compInitials.fills = [];
-  compInitials.cornerSmoothing = 1.0;
-
-  const ellipseInitials = figma.createEllipse();
-  ellipseInitials.name = 'Background';
-  ellipseInitials.resize(size, size);
-  ellipseInitials.fills = [{ type: 'SOLID', color: { r: 0.93, g: 0.95, b: 1 } }];
-  compInitials.appendChild(ellipseInitials);
-
-  const initials = persona.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  const textNode = figma.createText();
-  textNode.name = 'Initials';
-  try {
-    textNode.fontName = targetFont;
-  } catch (e) {}
-  textNode.characters = initials;
-  textNode.fontSize = Math.round(size * 0.36);
-  textNode.fills = [{ type: 'SOLID', color: { r: 0.14, g: 0.39, b: 0.92 } }];
-  textNode.textAlignHorizontal = 'CENTER';
-  textNode.textAlignVertical = 'CENTER';
-  textNode.resize(size, size);
-  textNode.x = 0;
-  textNode.y = 0;
-  compInitials.appendChild(textNode);
-
-  compPhoto.x = 0;
-  compPhoto.y = 0;
-  compInitials.x = size + 40;
-  compInitials.y = 0;
-
-  const componentSet = figma.combineAsVariants([compPhoto, compInitials], figma.currentPage);
-  componentSet.name = 'Avatar / User Profile';
-  componentSet.cornerSmoothing = 1.0;
-
-  const c = figma.viewport.center;
-  componentSet.x = Math.round(c.x - componentSet.width / 2);
-  componentSet.y = Math.round(c.y - componentSet.height / 2);
-
-  figma.currentPage.selection = [componentSet];
-  figma.viewport.scrollAndZoomIntoView([componentSet]);
-  return componentSet;
-}
-
-// 📦 3. Design-System Component Set Generator (Content x State variants + size scale)
+// 📦 2. Design-System Component Set Generator (Content x State variants + size scale)
 async function generateComponentSet(item, scope, setName) {
   await figma.loadFontAsync({ family: "Inter", style: "Regular" }).catch(() => {});
 
@@ -686,16 +601,6 @@ figma.ui.onmessage = async function(msg) {
         figma.notify(notifyMsg);
         figma.ui.postMessage({ type: 'ok', text: notifyMsg });
       }
-    }
-
-    else if (msg.type === 'create-dual-component') {
-      const items = Array.isArray(msg.items) ? msg.items : [];
-      if (items.length === 0) throw new Error('No item provided');
-      const item = items[0];
-      const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
-      await createPhotoInitialsComponentSet(item, persona, 64);
-      figma.notify('📦 Created "Avatar / User Profile" Design System Component Set!');
-      figma.ui.postMessage({ type: 'ok', text: 'Created Component Set with Photo & Initials!' });
     }
 
     else if (msg.type === 'generate-component-set') {
