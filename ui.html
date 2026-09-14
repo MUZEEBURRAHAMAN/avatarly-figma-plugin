@@ -397,6 +397,11 @@ html, body {
   transform: translateY(-1px);
 }
 
+.preset-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
 .preset-card.selected {
   border-color: var(--primary);
   box-shadow: 0 0 0 1.5px var(--primary);
@@ -907,6 +912,11 @@ html, body {
 
 .avatar-card:active { transform: scale(0.96); }
 
+.avatar-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
 /* Card Hover Quick Actions */
 .card-hover-actions {
   position: absolute;
@@ -921,7 +931,8 @@ html, body {
   z-index: 10;
 }
 
-.avatar-card:hover .card-hover-actions {
+.avatar-card:hover .card-hover-actions,
+.avatar-card:focus-within .card-hover-actions {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -1372,6 +1383,11 @@ input:checked + .slider:before { transform: translateX(12px); }
   background: var(--primary-light);
 }
 
+.scope-option:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
 .scope-radio {
   width: 17px;
   height: 17px;
@@ -1695,7 +1711,7 @@ input:checked + .slider:before { transform: translateX(12px); }
           <div class="presets-grid">
             
             <!-- Preset 1: Sculpted & 3D -->
-            <div class="preset-card selected" data-preset="sculpted">
+            <div class="preset-card selected" role="button" tabindex="0" aria-pressed="true" data-preset="sculpted">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/sculpted-avatars/preview/sculpted-avatars-001.jpg?cb=v2" alt="Sculpted & 3D preview" loading="lazy">
               </div>
@@ -1706,7 +1722,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 2: Office Avatars -->
-            <div class="preset-card" data-preset="office">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="office">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/office-avatars/preview/office-avatars-001.jpg?cb=v2" alt="Office Avatars preview" loading="lazy">
               </div>
@@ -1717,7 +1733,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 3: Everyday Avatars -->
-            <div class="preset-card" data-preset="everyday">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="everyday">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/everyday-avatars/preview/everyday-avatars-001.jpg?cb=v2" alt="Everyday Avatars preview" loading="lazy">
               </div>
@@ -1728,7 +1744,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 4: Illustrated Avatars -->
-            <div class="preset-card" data-preset="illustrated">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="illustrated">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/illustrated-avatars/preview/illustrated-avatars-001.jpg?cb=v2" alt="Sketch B&W preview" loading="lazy">
               </div>
@@ -1739,7 +1755,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 5: Cartoon Avatars -->
-            <div class="preset-card" data-preset="cartoon">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="cartoon">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/cartoon-avatars/preview/cartoon-avatars-001.jpg?cb=v2" alt="Cartoon & Fun preview" loading="lazy">
               </div>
@@ -1750,7 +1766,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 6: Doodle Avatars -->
-            <div class="preset-card" data-preset="doodles">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="doodles">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/doodle-avatars/preview/doodle-avatars-001.jpg?cb=v2" alt="Comic Color preview" loading="lazy">
               </div>
@@ -1761,7 +1777,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 7: Company Avatars -->
-            <div class="preset-card" data-preset="company">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="company">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/company-avatars/preview/company-avatars-001.jpg?cb=v2" alt="Company Logos preview" loading="lazy">
               </div>
@@ -1772,7 +1788,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 8: Abstract Avatars -->
-            <div class="preset-card" data-preset="abstract">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="abstract">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/abstract-avatars/preview/abstract-avatars-001.jpg?cb=v2" alt="Abstract Avatars preview" loading="lazy">
               </div>
@@ -1783,7 +1799,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 9: Quiet Avatars -->
-            <div class="preset-card" data-preset="quiet">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="quiet">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/quiet-avatars/preview/quiet-avatars-001.jpg?cb=v2" alt="Quiet Avatars preview" loading="lazy">
               </div>
@@ -1794,7 +1810,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 10: Cyber & Bots -->
-            <div class="preset-card" data-preset="cyber">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="cyber">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/cyber-avatars/preview/cyber-avatars-001.jpg?cb=v2" alt="Cyber & Bots preview" loading="lazy">
               </div>
@@ -1805,7 +1821,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 11: Memoji -->
-            <div class="preset-card" data-preset="memoji">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="memoji">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/memoji-avatars/preview/memoji-avatars-001.jpg?cb=v2" alt="Memoji Style preview" loading="lazy">
               </div>
@@ -1816,7 +1832,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 12: Pixel Avatars -->
-            <div class="preset-card" data-preset="pixel">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="pixel">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/pixel-avatars/preview/pixel-avatars-001.jpg?cb=v2" alt="Pixel Avatars preview" loading="lazy">
               </div>
@@ -1827,7 +1843,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 13: World Avatars -->
-            <div class="preset-card" data-preset="world">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="world">
               <div class="preset-thumb">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/world-avatars/preview/world-avatars-001.jpg?cb=v2" alt="World Avatars preview" loading="lazy">
               </div>
@@ -1838,7 +1854,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             </div>
 
             <!-- Preset 14: Smart Mix -->
-            <div class="preset-card" data-preset="random">
+            <div class="preset-card" role="button" tabindex="0" aria-pressed="false" data-preset="random">
               <div class="preset-thumb preset-thumb--mix">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/sculpted-avatars/preview/sculpted-avatars-001.jpg?cb=v2" alt="" loading="lazy">
                 <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/company-avatars/preview/company-avatars-001.jpg?cb=v2" alt="" loading="lazy">
@@ -2031,21 +2047,21 @@ input:checked + .slider:before { transform: translateX(12px); }
 
         <div class="section-label"><span>Scope</span></div>
         <div class="scope-options" id="scope-options">
-          <div class="scope-option active" data-scope="both">
+          <div class="scope-option active" role="button" tabindex="0" aria-pressed="true" data-scope="both">
             <span class="scope-radio"></span>
             <span class="scope-meta">
               <div class="scope-name">Photo + Initials (All states)</div>
               <div class="scope-sub">Default, hover, active, selected, disabled</div>
             </span>
           </div>
-          <div class="scope-option" data-scope="photo">
+          <div class="scope-option" role="button" tabindex="0" aria-pressed="false" data-scope="photo">
             <span class="scope-radio"></span>
             <span class="scope-meta">
               <div class="scope-name">Photo only</div>
               <div class="scope-sub">Avatar images only</div>
             </span>
           </div>
-          <div class="scope-option" data-scope="initials">
+          <div class="scope-option" role="button" tabindex="0" aria-pressed="false" data-scope="initials">
             <span class="scope-radio"></span>
             <span class="scope-meta">
               <div class="scope-name">Initials only</div>
@@ -2846,6 +2862,10 @@ function renderGrid(cat) {
     let currentUrl = initialUrl;
     const card = document.createElement('div');
     card.className = 'avatar-card loading';
+    card.setAttribute('role', 'button');
+    card.tabIndex = 0;
+    card.setAttribute('aria-pressed', 'false');
+    card.setAttribute('aria-label', 'Apply this avatar to selection');
 
     const img = document.createElement('img');
     img.className = 'avatar-img';
@@ -2948,8 +2968,12 @@ function renderGrid(cat) {
 
     card.addEventListener('click', async () => {
       try {
-        document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.avatar-card').forEach(c => {
+          c.classList.remove('selected');
+          c.setAttribute('aria-pressed', 'false');
+        });
         card.classList.add('selected');
+        card.setAttribute('aria-pressed', 'true');
         toast('Applying...');
         const syncPersona = document.getElementById('toggle-persona')?.checked ?? true;
         const asset = await fetchAssetWithFallback(currentUrl);
@@ -2976,6 +3000,19 @@ function renderGrid(cat) {
 /* ─────────────────────────────────────────────────── */
 /*  7. UI Event Listeners                              */
 /* ─────────────────────────────────────────────────── */
+
+// Keyboard activation (Enter / Space) for card-style clickable elements.
+// These are `role="button"` divs, not native <button>s, so the browser
+// doesn't activate them on Enter/Space by default -- this delegated
+// listener covers every card (including ones rendered later into the
+// gallery grid) without needing a listener attached to each one.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+  const target = e.target.closest('.preset-card, .avatar-card, .scope-option');
+  if (!target) return;
+  e.preventDefault();
+  target.click();
+});
 
 // Top Mode Switcher (Quick Add vs Browse Gallery)
 document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -3012,8 +3049,12 @@ document.querySelectorAll('.filter-bar .filter-pill').forEach(pill => {
 document.querySelectorAll('.preset-card').forEach(card => {
   card.addEventListener('click', (e) => {
     e.preventDefault();
-    document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.preset-card').forEach(c => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-pressed', 'false');
+    });
     card.classList.add('selected');
+    card.setAttribute('aria-pressed', 'true');
     selectedPreset = card.dataset.preset;
     const nameEl = card.querySelector('.preset-name');
     if (nameEl) {
@@ -3150,8 +3191,12 @@ let selectedScope = 'both';
 
 document.querySelectorAll('.scope-option').forEach(opt => {
   opt.addEventListener('click', () => {
-    document.querySelectorAll('.scope-option').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('.scope-option').forEach(o => {
+      o.classList.remove('active');
+      o.setAttribute('aria-pressed', 'false');
+    });
     opt.classList.add('active');
+    opt.setAttribute('aria-pressed', 'true');
     selectedScope = opt.dataset.scope;
   });
 });
