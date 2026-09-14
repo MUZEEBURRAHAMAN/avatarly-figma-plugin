@@ -1,0 +1,3062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Avatarly - Infinite Avatar & Quick-Fill Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Design Tokens & System ─────────────────────────── */
+:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-tertiary: #F1F5F9;
+  --surface: #FFFFFF;
+  --text-main: #0F172A;
+  --text-sub: #475569;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --border-focus: #C900FF;
+  --primary: #8900AE;
+  --primary-hover: #5D0076;
+  --primary-light: #FBF0FD;
+  --accent: #C900FF;
+  --accent-dark: #330040;
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --font-heading: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 420px;
+  height: 680px;
+  overflow: hidden;
+  background: var(--bg-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 680px;
+  background: var(--bg-primary);
+}
+
+/* ─── Duotone Icon Base Classes ──────────────────────── */
+.duotone-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duotone-icon svg {
+  display: block;
+}
+
+/* ─── Header ─────────────────────────────────────────── */
+.header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.brand-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(137, 0, 174, 0.4);
+  overflow: hidden;
+}
+
+.brand-badge svg {
+  width: 26px;
+  height: 26px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-sub);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+}
+
+/* ─── Mode Switcher Bar ──────────────────────────────── */
+.mode-nav {
+  display: flex;
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.mode-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mode-tab svg {
+  width: 15px;
+  height: 15px;
+}
+
+.mode-tab:hover {
+  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.mode-tab.active {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─── Screen Viewport ────────────────────────────────── */
+.screen-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ─── Screen 1: Quick Add Studio ─────────────────────── */
+.quick-view {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selection-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selection-card.has-selection {
+  background: var(--success-bg);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.sel-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sel-beacon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.selection-card.has-selection .sel-beacon {
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: pulse-beacon 2s infinite;
+}
+
+@keyframes pulse-beacon {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.sel-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-main);
+}
+
+.sel-desc {
+  font-size: 10.5px;
+  color: var(--text-sub);
+}
+
+.sel-icon {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.selection-card.has-selection .sel-icon {
+  color: var(--success);
+}
+
+/* Filter Tag Pills (Duotone Icons & Smooth Scroll Navigation) */
+.filter-nav-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 4px 4px 4px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.filter-arrow-btn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--text-sub);
+  transition: opacity 0.2s ease, color 0.15s ease;
+}
+
+.filter-arrow-btn:hover {
+  color: var(--primary);
+}
+
+.filter-arrow-btn.prev {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-primary) 70%, rgba(255, 255, 255, 0));
+  justify-content: flex-start;
+  padding-left: 2px;
+}
+
+.filter-arrow-btn.next {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-primary) 70%, rgba(255, 255, 255, 0));
+  justify-content: flex-end;
+  padding-right: 2px;
+}
+
+.filter-arrow-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filter-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-sub);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.14s ease;
+}
+
+.filter-pill svg {
+  width: 13px;
+  height: 13px;
+}
+
+.filter-pill:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+}
+
+.filter-pill.active {
+  background: #330040;
+  color: #FFFFFF;
+  border-color: #330040;
+  box-shadow: 0 2px 6px rgba(51, 0, 64, 0.25);
+}
+
+/* Presets Grid (Phosphor Duotone Themed) */
+.section-label {
+  font-family: var(--font-heading);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.preset-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 0 7px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.preset-card:hover {
+  border-color: #CBD5E1;
+  transform: translateY(-1px);
+}
+
+.preset-card.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1.5px var(--primary);
+}
+
+.preset-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-secondary);
+  display: grid;
+  overflow: hidden;
+}
+
+.preset-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preset-thumb--mix {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1px;
+}
+
+.preset-meta {
+  padding: 6px 4px 0;
+  min-width: 0;
+}
+
+.preset-name {
+  font-weight: 600;
+  font-size: 10.5px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preset-sub {
+  font-size: 8.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CTA Buttons */
+.cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.primary-btn {
+  height: 40px;
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(137, 0, 174, 0.32);
+  transition: all 0.18s ease;
+}
+
+.primary-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  background: var(--primary-hover);
+  box-shadow: 0 6px 18px rgba(137, 0, 174, 0.42);
+}
+
+/* Generation & Studio Tools Accordion */
+.tools-accordion {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  overflow: hidden;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.tools-accordion-header {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  background: var(--bg-secondary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: background 0.15s ease;
+}
+.tools-accordion-header:hover {
+  background: #EFF6FF;
+  color: var(--primary);
+}
+
+.tools-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tools-accordion-title svg {
+  width: 14px;
+  height: 14px;
+  color: var(--primary);
+}
+
+.accordion-chevron {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+}
+.tools-accordion.open .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.tools-accordion-body {
+  display: none;
+  padding: 10px;
+  flex-direction: column;
+  gap: 9px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+.tools-accordion.open .tools-accordion-body {
+  display: flex;
+}
+
+.section-sub-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.generator-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.generator-actions .secondary-btn {
+  height: 32px;
+  font-size: 10.5px;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+.secondary-btn {
+  height: 34px;
+  background: var(--bg-secondary);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.secondary-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.secondary-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: #CBD5E1;
+}
+
+.engine-status {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-sub);
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--success);
+  font-weight: 600;
+}
+
+.status-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Status & Story Ring Picker */
+.badge-picker {
+  display: flex;
+  gap: 3px;
+  background: var(--bg-secondary);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.badge-btn {
+  flex: 1;
+  height: 26px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-sub);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  padding: 0 2px;
+  transition: all 0.15s ease;
+}
+
+.badge-btn:hover {
+  color: var(--text-main);
+}
+
+.badge-btn.active {
+  background: #FFFFFF;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dot-none {
+  border: 1px dashed #94A3B8;
+  background: transparent;
+}
+
+.dot-online {
+  background: #10B981;
+  box-shadow: 0 0 0 1.5px rgba(16, 185, 129, 0.25);
+}
+
+.dot-away {
+  background: #F59E0B;
+  box-shadow: 0 0 0 1.5px rgba(245, 158, 11, 0.25);
+}
+
+.dot-verified {
+  width: 10px;
+  height: 10px;
+  background: #2563EB;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  box-shadow: 0 0 0 1.5px rgba(37, 99, 235, 0.25);
+  flex-shrink: 0;
+}
+.dot-verified svg {
+  width: 6.5px;
+  height: 6.5px;
+  stroke: #FFFFFF;
+  display: block;
+}
+
+.dot-story {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+}
+
+.badge-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: #F3E8FF;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+/* Shortcut Helper */
+.shortcut-guide {
+  background: #F8FAFC;
+  border: 1px dashed #CBD5E1;
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.shortcut-icon {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+}
+
+.shortcut-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.shortcut-text {
+  font-size: 10.5px;
+  color: var(--text-sub);
+  line-height: 1.35;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 1px 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 9.5px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* ─── Screen 2: Gallery Browser Nav with Scroll Controls ─── */
+/* ─── Screen 2: Gallery Browser Nav with Previous / Next Arrows ─── */
+.gallery-nav-wrapper {
+  position: relative;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.gallery-nav {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 16px;
+  flex: 1;
+  background: transparent;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery-nav::-webkit-scrollbar { display: none; }
+
+.nav-arrow-btn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--text-sub);
+  transition: opacity 0.2s ease, color 0.15s ease;
+}
+
+.nav-arrow-btn:hover {
+  color: var(--primary);
+}
+
+.nav-arrow-btn.prev {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-primary) 70%, rgba(255, 255, 255, 0));
+  justify-content: flex-start;
+  padding-left: 6px;
+}
+
+.nav-arrow-btn.next {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-primary) 70%, rgba(255, 255, 255, 0));
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.nav-arrow-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-arrow-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.cat-tab {
+  height: 42px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-sub);
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+  padding: 0 4px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.cat-tab:hover { color: var(--text-main); }
+.cat-tab.active { color: var(--primary); font-weight: 600; }
+.cat-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary);
+}
+
+.grid-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+.grid-container::-webkit-scrollbar { width: 5px; }
+.grid-container::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.avatar-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.avatar-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.avatar-card.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2.5px var(--primary);
+}
+
+.avatar-card:active { transform: scale(0.96); }
+
+/* Card Hover Quick Actions */
+.card-hover-actions {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-3px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 10;
+}
+
+.avatar-card:hover .card-hover-actions {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.card-action-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  transition: all 0.14s ease;
+}
+.card-action-btn:hover {
+  background: var(--primary);
+  transform: scale(1.1);
+}
+.card-action-btn svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Settings Box */
+.settings-box {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid var(--border);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-sub);
+  font-weight: 500;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  cursor: pointer;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #CBD5E1;
+  border-radius: 20px;
+  transition: 0.2s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(12px); }
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.avatar-img.loaded { opacity: 1; }
+
+@keyframes pulse-card {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.avatar-card.loading {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: pulse-card 1.4s ease-in-out infinite;
+}
+
+/* Company logo cards — white padded bg so all brand SVGs are clearly visible */
+
+/* ─── Footer ─────────────────────────────────────────── */
+.footer {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-primary);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-sub);
+  cursor: pointer;
+}
+.footer-link svg {
+  width: 13px;
+  height: 13px;
+}
+.footer-link:hover { color: var(--primary); }
+
+/* ─── Toast Feedback ─────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #0F172A;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 13px;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toast svg {
+  width: 14px;
+  height: 14px;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─── Premium Onboarding Modal ───────────────────────── */
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  display: none;
+  z-index: 9999;
+}
+
+.onboarding-overlay.show {
+  display: flex;
+}
+
+.onboarding-card {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+.onboarding-overlay.show .onboarding-card {
+  opacity: 1;
+}
+
+.onboarding-header {
+  padding: 16px 18px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.onboarding-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(137, 0, 174, 0.15);
+}
+
+.onboarding-body {
+  flex: 1;
+  padding: 4px 24px 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.onboarding-slide {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  height: 100%;
+  animation: fadeInSlide 0.24s ease;
+}
+
+.onboarding-slide.active {
+  display: flex;
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-illustration {
+  width: 100%;
+  height: 218px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.onboarding-illustration > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.onboarding-illustration-scene {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.onboarding-illustration-mark {
+  position: relative;
+  z-index: 1;
+  width: 88px !important;
+  height: 88px !important;
+}
+
+.onboarding-title {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.onboarding-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-sub);
+  max-width: 320px;
+}
+
+.onboarding-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: var(--bg-secondary);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-top: 2px;
+}
+
+.onboarding-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 11.5px;
+  color: var(--text-main);
+  font-weight: 500;
+  line-height: 1.42;
+}
+
+.onboarding-feature-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 0.5px;
+}
+
+.onboarding-feature-item .fi-check {
+  color: var(--success);
+}
+
+.onboarding-feature-item .fi-icon {
+  color: var(--primary);
+}
+
+.onboarding-footer {
+  padding: 12px 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.onboarding-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.onboarding-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #CBD5E1;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.onboarding-dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: var(--primary);
+}
+
+.onboarding-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.onboarding-btn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.onboarding-btn.ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-sub);
+}
+.onboarding-btn.ghost:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+}
+
+.onboarding-btn.primary {
+  background: var(--primary);
+  border: none;
+  color: #FFFFFF;
+  box-shadow: 0 3px 10px rgba(137, 0, 174, 0.35);
+}
+.onboarding-btn.primary:hover {
+  box-shadow: 0 4px 14px rgba(137, 0, 174, 0.45);
+  transform: translateY(-0.5px);
+}
+
+.onboarding-btn svg {
+  width: 12px;
+  height: 12px;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-badge">
+        <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip-brand-header)">
+            <rect width="128" height="128" rx="30" transform="matrix(1 0 0 -1 0 128)" fill="url(#grad-brand-header)"/>
+            <path d="M10.2397 125.736C10.2435 126.007 10.3007 126.275 10.4079 126.524C10.5152 126.773 10.6704 126.998 10.8647 127.187C11.0591 127.376 11.2887 127.525 11.5406 127.625C11.7924 127.725 12.0616 127.775 12.3326 127.771H108.659C108.931 127.775 109.2 127.726 109.452 127.626C109.704 127.526 109.934 127.377 110.129 127.188C110.324 126.999 110.479 126.774 110.587 126.524C110.694 126.275 110.751 126.007 110.755 125.736V123.307C110.803 122.574 110.9 118.923 108.493 114.883C106.974 112.335 104.77 110.136 101.942 108.343C98.5206 106.173 94.1682 104.604 88.903 103.659C86.2301 103.284 83.5788 102.769 80.9602 102.114C73.9964 100.336 73.3878 98.7619 73.3825 98.7461C73.3415 98.5909 73.2829 98.4409 73.2079 98.2989C73.1497 98.0079 73.0095 96.9019 73.2794 93.9412C73.962 86.4191 77.9969 81.9741 81.238 78.4023C82.2593 77.2778 83.225 76.2115 83.9685 75.1691C87.1779 70.6711 87.4743 65.5515 87.4875 65.234C87.4996 64.6714 87.4219 64.1105 87.2573 63.5724C86.9398 62.5934 86.3498 61.9849 85.9159 61.5351C85.8133 61.432 85.7136 61.3261 85.6169 61.2176C85.5851 61.1805 85.5005 61.08 85.5772 60.5746C85.8367 58.9467 86.0159 57.3069 86.1143 55.6613C86.2625 53.0102 86.3762 49.0467 85.691 45.1865C85.5906 44.4491 85.4385 43.7197 85.2359 43.0037C84.5162 40.3455 83.352 38.0789 81.7434 36.2039C81.4656 35.8996 74.724 28.7955 55.1528 27.3403C52.4461 27.1392 49.7711 27.2477 47.1359 27.3827C46.3566 27.4002 45.581 27.4959 44.8208 27.6684C42.7994 28.1896 42.2596 29.4702 42.1194 30.1872C41.8839 31.3779 42.2967 32.2986 42.5692 32.9125C42.6089 32.9998 42.6591 33.1082 42.5718 33.394C42.1194 34.0978 41.4024 34.7328 40.6748 35.3334C40.4631 35.5107 35.5577 39.744 35.2878 45.2711C34.5602 49.4754 34.6132 56.0238 35.4731 60.5508C35.526 60.8022 35.5974 61.1726 35.4783 61.424C34.5523 62.2521 33.5046 63.1914 33.5072 65.3345C33.5178 65.5515 33.8168 70.6685 37.0262 75.1691C37.767 76.2115 38.7327 77.2751 39.7514 78.3996L39.7567 78.4023C42.9978 81.9741 47.0327 86.4191 47.7153 93.9386C47.9825 96.9019 47.8423 98.0052 47.7868 98.2989C47.7109 98.4408 47.6514 98.5908 47.6095 98.7461C47.6068 98.7619 47.0009 100.331 40.0689 102.106C36.0684 103.13 32.1314 103.654 32.0123 103.667C26.8953 104.533 22.5693 106.064 19.1536 108.221C16.3357 110.001 14.1265 112.208 12.5919 114.775C10.1366 118.876 10.2027 122.611 10.2371 123.294L10.2397 125.736Z" fill="#97029C" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+            <g opacity="0.2">
+              <path d="M16.0119 125.996C16.0156 126.263 16.0719 126.527 16.1775 126.772C16.2831 127.017 16.4359 127.239 16.6273 127.425C16.8186 127.611 17.0448 127.757 17.2928 127.856C17.5407 127.955 17.8057 128.004 18.0726 128H112.921C113.188 128.004 113.453 127.955 113.701 127.857C113.95 127.758 114.176 127.612 114.368 127.426C114.559 127.24 114.712 127.018 114.818 126.772C114.924 126.527 114.98 126.263 114.984 125.996V123.605C115.031 122.883 115.127 119.288 112.757 115.31C111.261 112.801 109.091 110.636 106.306 108.869C102.937 106.733 98.6519 105.188 93.4675 104.258C90.8356 103.889 88.225 103.381 85.6467 102.737C78.7897 100.986 78.1905 99.4356 78.1853 99.42C78.1449 99.2672 78.0872 99.1195 78.0134 98.9797C77.9561 98.6931 77.818 97.6041 78.0837 94.6888C78.7559 87.2821 82.7288 82.9052 85.9202 79.3881C86.9258 78.2809 87.8767 77.231 88.6088 76.2045C91.7689 71.7755 92.0607 66.7344 92.0737 66.4217C92.0857 65.8678 92.0091 65.3155 91.8471 64.7856C91.5345 63.8217 90.9535 63.2225 90.5262 62.7796C90.4253 62.6781 90.3271 62.5738 90.2318 62.4669C90.2006 62.4305 90.1172 62.3315 90.1928 61.8339C90.4483 60.2308 90.6248 58.6162 90.7216 56.9959C90.8675 54.3854 90.9795 50.4827 90.3048 46.6816C90.206 45.9556 90.0563 45.2374 89.8567 44.5323C89.1481 41.9149 88.0018 39.683 86.4178 37.8368C86.1443 37.5372 79.5062 30.542 60.2354 29.1091C57.5703 28.9111 54.9364 29.018 52.3416 29.1508C51.5742 29.1681 50.8106 29.2623 50.062 29.4322C48.0717 29.9454 47.5402 31.2064 47.4021 31.9124C47.1702 33.0848 47.5767 33.9914 47.845 34.5958C47.8841 34.6818 47.9336 34.7886 47.8476 35.07C47.4021 35.763 46.6961 36.3882 45.9797 36.9796C45.7712 37.1542 40.9412 41.3226 40.6754 46.765C39.959 50.9048 40.0111 57.3528 40.8578 61.8104C40.9099 62.0579 40.9803 62.4226 40.863 62.6701C39.9512 63.4856 38.9195 64.4105 38.9221 66.5207C38.9326 66.7344 39.2269 71.7729 42.3871 76.2045C43.1165 77.231 44.0674 78.2783 45.0704 79.3855L45.0757 79.3881C48.267 82.9052 52.24 87.2821 52.9121 94.6862C53.1753 97.6041 53.0372 98.6905 52.9825 98.9797C52.9078 99.1194 52.8492 99.2671 52.8079 99.42C52.8053 99.4356 52.2087 100.981 45.3831 102.729C41.444 103.737 37.5674 104.253 37.4502 104.266C32.4117 105.118 28.1522 106.626 24.7888 108.749C22.0143 110.503 19.8389 112.676 18.3279 115.203C15.9103 119.241 15.9754 122.919 16.0093 123.592L16.0119 125.996Z" fill="white" stroke="white" stroke-linejoin="round"/>
+            </g>
+          </g>
+          <defs>
+            <linearGradient id="grad-brand-header" x1="1.19209e-07" y1="128" x2="128" y2="1.19209e-07" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#B018B6"/>
+              <stop offset="1" stop-color="#D100D8"/>
+            </linearGradient>
+            <clipPath id="clip-brand-header">
+              <rect width="128" height="128" rx="30" transform="matrix(1 0 0 -1 0 128)" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+      <span>Avatarly</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="help-btn" title="Feature Tour & Guide">
+        <!-- Duotone: Question -->
+        <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36a8,8,0,0,0,16,0c0-11,10.77-20,24-20s24,9,24,20c0,9.36-7.85,17.29-19.46,24.16C120.73,139.23,120,143.43,120,148v4a8,8,0,0,0,16,0v-1.74c15.11-8.52,24-19.57,24-32.26C160,98.15,145.94,72,128,72ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="refresh-btn" title="Roll 1000+ Fresh Seeds">
+        <!-- Duotone: ArrowClockwise -->
+        <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M224,128a96,96,0,0,1-96,96A95.77,95.77,0,0,1,58.82,185.16L40,204V144h60l-22.37,22.37A79.8,79.8,0,1,0,48.42,112.56a8,8,0,1,1-15.84-2.45A96,96,0,0,1,224,128Z"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="close-btn" title="Close">
+        <!-- Duotone: X -->
+        <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Mode Switcher -->
+  <nav class="mode-nav">
+    <button class="mode-tab active" id="tab-quick" data-screen="quick">
+      <!-- Phosphor Duotone: Lightning -->
+      <svg viewBox="0 0 256 256">
+        <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="currentColor" opacity="0.2"/>
+        <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+      </svg>
+      Quick Add & Auto-Fill
+    </button>
+    <button class="mode-tab" id="tab-gallery" data-screen="gallery">
+      <!-- Phosphor Duotone: SquaresFour -->
+      <svg viewBox="0 0 256 256">
+        <rect x="48" y="48" width="64" height="64" rx="8" fill="currentColor" opacity="0.2"/>
+        <rect x="144" y="48" width="64" height="64" rx="8" fill="currentColor" opacity="0.2"/>
+        <rect x="48" y="144" width="64" height="64" rx="8" fill="currentColor" opacity="0.2"/>
+        <rect x="144" y="144" width="64" height="64" rx="8" fill="currentColor" opacity="0.2"/>
+        <rect x="48" y="48" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <rect x="144" y="48" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <rect x="48" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <rect x="144" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+      </svg>
+      Browse Gallery
+    </button>
+  </nav>
+
+  <!-- Screen Wrapper -->
+  <div class="screen-wrapper">
+    
+    <!-- Screen 1: Quick Add Studio -->
+    <div class="screen active" id="screen-quick">
+      <div class="quick-view">
+        
+        <!-- Live Selection Status Card -->
+        <div class="selection-card" id="selection-card">
+          <div class="sel-info">
+            <div class="sel-beacon"></div>
+            <div>
+              <div class="sel-title" id="sel-title">No layer selected</div>
+              <div class="sel-desc" id="sel-desc">Will insert new avatar at canvas center</div>
+            </div>
+          </div>
+          <div class="sel-icon">
+            <!-- Phosphor Duotone: Target -->
+            <svg width="18" height="18" viewBox="0 0 256 256">
+              <circle cx="128" cy="128" r="48" fill="currentColor" opacity="0.2"/>
+              <circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+              <circle cx="128" cy="128" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+              <line x1="128" y1="32" x2="128" y2="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+              <line x1="128" y1="248" x2="128" y2="224" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+              <line x1="32" y1="128" x2="8" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+              <line x1="248" y1="128" x2="224" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filter Tag Pills (Phosphor Duotone with Previous/Next Arrows) -->
+        <div>
+          <div class="section-label">
+            <span>Filter Archetype / Vibe</span>
+            <span style="color: var(--text-muted); font-size: 9.5px;">Infinite 1000+ Pool</span>
+          </div>
+          <div class="filter-nav-wrapper">
+            <button class="filter-arrow-btn prev hidden" id="filter-arrow-prev" title="Scroll left" aria-label="Previous filters">
+              <!-- Phosphor Duotone: CaretLeft -->
+              <svg viewBox="0 0 256 256" width="12" height="12" fill="currentColor">
+                <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/>
+              </svg>
+            </button>
+
+            <div class="filter-bar" id="filter-bar">
+              <button class="filter-pill active" data-filter="all">
+                <!-- Duotone: Users -->
+                <svg viewBox="0 0 256 256">
+                  <path d="M168,160a40,40,0,1,0-40-40A40,40,0,0,0,168,160Zm0-64a24,24,0,1,1-24,24A24,24,0,0,1,168,96Zm48,128a8,8,0,0,0,8-8,56.06,56.06,0,0,0-56-56H168a56.06,56.06,0,0,0-56,56,8,8,0,0,0,16,0,40,40,0,0,1,40-40h8a40,40,0,0,1,40,40A8,8,0,0,0,216,224Z" fill="currentColor"/>
+                  <path d="M88,144A36,36,0,1,0,52,108,36,36,0,0,0,88,144Zm0-56A20,20,0,1,1,68,108,20,20,0,0,1,88,88Zm40,128a8,8,0,0,0,8-8,48.05,48.05,0,0,0-48-48H88a48.05,48.05,0,0,0-48,48,8,8,0,0,0,16,0,32,32,0,0,1,32-32h0a32,32,0,0,1,32,32A8,8,0,0,0,128,216Z" fill="currentColor" opacity="0.6"/>
+                </svg>
+                All Diverse
+              </button>
+
+              <button class="filter-pill" data-filter="female">
+                <!-- Duotone: Sparkle -->
+                <svg viewBox="0 0 256 256">
+                  <path d="M149.66,42.34a8,8,0,0,0-11.32,0L128,52.69,117.66,42.34a8,8,0,0,0-11.32,11.32L116.69,64l-10.35,10.34a8,8,0,0,0,11.32,11.32L128,75.31l10.34,10.35a8,8,0,0,0,11.32-11.32L139.31,64l10.35-10.34A8,8,0,0,0,149.66,42.34ZM224,128a96,96,0,1,1-96-96A96.11,96.11,0,0,1,224,128Z" fill="currentColor" opacity="0.2"/>
+                  <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" fill="currentColor"/>
+                </svg>
+                Female
+              </button>
+
+              <button class="filter-pill" data-filter="male">
+                <!-- Duotone: User -->
+                <svg viewBox="0 0 256 256">
+                  <circle cx="128" cy="96" r="48" fill="currentColor" opacity="0.2"/>
+                  <circle cx="128" cy="96" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                  <path d="M32,216a96,96,0,0,1,192,0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                </svg>
+                Male
+              </button>
+
+              <button class="filter-pill" data-filter="pro">
+                <!-- Duotone: Briefcase -->
+                <svg viewBox="0 0 256 256">
+                  <rect x="32" y="72" width="192" height="144" rx="16" fill="currentColor" opacity="0.2"/>
+                  <rect x="32" y="72" width="192" height="144" rx="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                  <path d="M168,72V48a16,16,0,0,0-16-16H104A16,16,0,0,0,88,48V72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                  <line x1="32" y1="128" x2="224" y2="128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                </svg>
+                Professional
+              </button>
+
+              <button class="filter-pill" data-filter="creative">
+                <!-- Duotone: PaintBrush -->
+                <svg viewBox="0 0 256 256">
+                  <path d="M224,48a24,24,0,0,0-33.94,0L77.66,160.34a8,8,0,0,0-2.34,5.66V208a8,8,0,0,0,8,8h42a8,8,0,0,0,5.66-2.34L224,81.94A24,24,0,0,0,224,48Z" fill="currentColor" opacity="0.2"/>
+                  <path d="M224,48a24,24,0,0,0-33.94,0L77.66,160.34a8,8,0,0,0-2.34,5.66V208a8,8,0,0,0,8,8h42a8,8,0,0,0,5.66-2.34L224,81.94A24,24,0,0,0,224,48Zm-11.31,22.63-16,16L169.37,59.31l16-16a8,8,0,0,1,11.32,0l16,16A8,8,0,0,1,212.69,70.63Z" fill="currentColor"/>
+                </svg>
+                Creative & Art
+              </button>
+
+              <button class="filter-pill" data-filter="tech">
+                <!-- Duotone: Terminal / Code -->
+                <svg viewBox="0 0 256 256">
+                  <rect x="32" y="48" width="192" height="160" rx="16" fill="currentColor" opacity="0.2"/>
+                  <rect x="32" y="48" width="192" height="160" rx="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <polyline points="80 112 112 136 80 160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <line x1="128" y1="160" x2="168" y2="160" stroke="currentColor" stroke-linecap="round" stroke-width="16"/>
+                </svg>
+                Tech & Dev
+              </button>
+
+              <button class="filter-pill" data-filter="casual">
+                <!-- Duotone: Smiley -->
+                <svg viewBox="0 0 256 256">
+                  <circle cx="128" cy="128" r="96" fill="currentColor" opacity="0.2"/>
+                  <circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                  <circle cx="92" cy="108" r="12" fill="currentColor"/>
+                  <circle cx="164" cy="108" r="12" fill="currentColor"/>
+                  <path d="M168,152a48,48,0,0,1-80,0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                </svg>
+                Casual
+              </button>
+            </div>
+
+            <button class="filter-arrow-btn next" id="filter-arrow-next" title="Scroll right" aria-label="Next filters">
+              <!-- Phosphor Duotone: CaretRight -->
+              <svg viewBox="0 0 256 256" width="12" height="12" fill="currentColor">
+                <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 8 Modern Style Presets with Duotone Vector Icons -->
+        <div>
+          <div class="section-label">
+            <span>Select Style Preset</span>
+            <span id="preset-count" style="color: var(--primary); font-weight: 600;">3D & Pixar</span>
+          </div>
+
+          <div class="presets-grid">
+            
+            <!-- Preset 1: Sculpted & 3D -->
+            <div class="preset-card selected" data-preset="sculpted">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/sculpted-avatars/preview/sculpted-avatars-001.jpg?cb=v2" alt="Sculpted & 3D preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Sculpted & 3D</div>
+                <div class="preset-sub">3D Busts & Clay</div>
+              </div>
+            </div>
+
+            <!-- Preset 2: Office Avatars -->
+            <div class="preset-card" data-preset="office">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/office-avatars/preview/office-avatars-001.jpg?cb=v2" alt="Office Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Office</div>
+                <div class="preset-sub">SaaS & Workplaces</div>
+              </div>
+            </div>
+
+            <!-- Preset 3: Everyday Avatars -->
+            <div class="preset-card" data-preset="everyday">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/everyday-avatars/preview/everyday-avatars-001.jpg?cb=v2" alt="Everyday Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Everyday</div>
+                <div class="preset-sub">Authentic People</div>
+              </div>
+            </div>
+
+            <!-- Preset 4: Illustrated Avatars -->
+            <div class="preset-card" data-preset="illustrated">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/illustrated-avatars/preview/illustrated-avatars-001.jpg?cb=v2" alt="Sketch B&W preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Sketch B&W</div>
+                <div class="preset-sub">Editorial Personas</div>
+              </div>
+            </div>
+
+            <!-- Preset 5: Cartoon Avatars -->
+            <div class="preset-card" data-preset="cartoon">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/cartoon-avatars/preview/cartoon-avatars-001.jpg?cb=v2" alt="Cartoon & Fun preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Cartoon & Fun</div>
+                <div class="preset-sub">Playful Characters</div>
+              </div>
+            </div>
+
+            <!-- Preset 6: Doodle Avatars -->
+            <div class="preset-card" data-preset="doodles">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/doodle-avatars/preview/doodle-avatars-001.jpg?cb=v2" alt="Comic Color preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Comic Color</div>
+                <div class="preset-sub">Paper Sketches</div>
+              </div>
+            </div>
+
+            <!-- Preset 7: Company Avatars -->
+            <div class="preset-card" data-preset="company">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/company-avatars/preview/company-avatars-001.jpg?cb=v2" alt="Company Logos preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Company Logos</div>
+                <div class="preset-sub">Fictional Brands</div>
+              </div>
+            </div>
+
+            <!-- Preset 8: Abstract Avatars -->
+            <div class="preset-card" data-preset="abstract">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/abstract-avatars/preview/abstract-avatars-001.jpg?cb=v2" alt="Abstract Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Abstract</div>
+                <div class="preset-sub">Geometric Art</div>
+              </div>
+            </div>
+
+            <!-- Preset 9: Quiet Avatars -->
+            <div class="preset-card" data-preset="quiet">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/quiet-avatars/preview/quiet-avatars-001.jpg?cb=v2" alt="Quiet Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Quiet</div>
+                <div class="preset-sub">Low Distraction</div>
+              </div>
+            </div>
+
+            <!-- Preset 10: Cyber & Bots -->
+            <div class="preset-card" data-preset="cyber">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/cyber-avatars/preview/cyber-avatars-001.jpg?cb=v2" alt="Cyber & Bots preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Cyber & Bots</div>
+                <div class="preset-sub">Sci-Fi Robots</div>
+              </div>
+            </div>
+
+            <!-- Preset 11: Memoji -->
+            <div class="preset-card" data-preset="memoji">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/memoji-avatars/preview/memoji-avatars-001.jpg?cb=v2" alt="Memoji Style preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Memoji Style</div>
+                <div class="preset-sub">Apple-like Characters</div>
+              </div>
+            </div>
+
+            <!-- Preset 12: Pixel Avatars -->
+            <div class="preset-card" data-preset="pixel">
+              <div class="preset-thumb">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/pixel-avatars/preview/pixel-avatars-001.jpg?cb=v2" alt="Pixel Avatars preview" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Pixel</div>
+                <div class="preset-sub">Mosaic Grid</div>
+              </div>
+            </div>
+
+            <!-- Preset 13: Smart Mix -->
+            <div class="preset-card" data-preset="random">
+              <div class="preset-thumb preset-thumb--mix">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/sculpted-avatars/preview/sculpted-avatars-001.jpg?cb=v2" alt="" loading="lazy">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/company-avatars/preview/company-avatars-001.jpg?cb=v2" alt="" loading="lazy">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/cyber-avatars/preview/cyber-avatars-001.jpg?cb=v2" alt="" loading="lazy">
+                <img src="https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/pixel-avatars/preview/pixel-avatars-001.jpg?cb=v2" alt="" loading="lazy">
+              </div>
+              <div class="preset-meta">
+                <div class="preset-name">Smart Mix</div>
+                <div class="preset-sub">Full Variety Blend</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Primary Quick Fill Action -->
+        <button class="primary-btn" id="btn-quick-fill">
+          <!-- Duotone: Lightning -->
+          <svg viewBox="0 0 256 256">
+            <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="#FFFFFF" opacity="0.3"/>
+            <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+          </svg>
+          <span id="btn-quick-fill-text">Quick Fill Selected (or Insert)</span>
+        </button>
+
+        <!-- 4. Collapsible Studio Tools Drawer (100% features preserved!) -->
+        <div class="tools-accordion" id="tools-accordion">
+          <button class="tools-accordion-header" id="tools-accordion-toggle" type="button">
+            <div class="tools-accordion-title">
+              <!-- Duotone: Sliders -->
+              <svg viewBox="0 0 256 256">
+                <circle cx="128" cy="128" r="40" fill="currentColor" opacity="0.2"/>
+                <path d="M128,88a40,40,0,1,0,40,40A40,40,0,0,0,128,88Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,152Z" fill="currentColor"/>
+                <path d="M231.88,111.45l-19.67-3.41a96.59,96.59,0,0,0-10.74-25.92l11.43-16.32a8,8,0,0,0-1.46-10.59L193.79,37.56a8,8,0,0,0-10.59,1.46l-11.43,16.32a96.59,96.59,0,0,0-25.92-10.74L142.44,25A8,8,0,0,0,134.55,18H121.45a8,8,0,0,0-7.89,7l-3.41,19.67a96.59,96.59,0,0,0-25.92,10.74L72.8,39.02a8,8,0,0,0-10.59-1.46L44.56,55.21a8,8,0,0,0-1.46,10.59L54.53,82.12A96.59,96.59,0,0,0,43.79,108L24.12,111.45A8,8,0,0,0,17,119.34v17.32a8,8,0,0,0,7.12,7.89l19.67,3.41a96.59,96.59,0,0,0,10.74,25.92l-11.43,16.32a8,8,0,0,0,1.46,10.59l17.65,17.65a8,8,0,0,0,10.59-1.46l11.43-16.32a96.59,96.59,0,0,0,25.92,10.74L113.56,231a8,8,0,0,0,7.89,7h13.1a8,8,0,0,0,7.89-7l3.41-19.67a96.59,96.59,0,0,0,25.92-10.74l11.43,16.32a8,8,0,0,0,10.59,1.46l17.65-17.65a8,8,0,0,0,1.46-10.59l-11.43-16.32a96.59,96.59,0,0,0,10.74-25.92l19.67-3.41a8,8,0,0,0,7.12-7.89V119.34A8,8,0,0,0,231.88,111.45Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+              </svg>
+              <span>Overlays, Personas & Tools</span>
+            </div>
+            <svg class="accordion-chevron" viewBox="0 0 256 256" fill="currentColor">
+              <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/>
+            </svg>
+          </button>
+
+          <div class="tools-accordion-body" id="tools-accordion-body">
+            <!-- Status / Story Overlay Selector -->
+            <div>
+              <div class="section-sub-title">Status & Story Ring Overlay</div>
+              <div class="badge-picker" id="badge-picker">
+                <button class="badge-btn active" data-badge="none">
+                  <span class="badge-dot dot-none"></span>
+                  <span>None</span>
+                </button>
+                <button class="badge-btn" data-badge="online">
+                  <span class="badge-dot dot-online"></span>
+                  <span>Online</span>
+                </button>
+                <button class="badge-btn" data-badge="away">
+                  <span class="badge-dot dot-away"></span>
+                  <span>Away</span>
+                </button>
+                <button class="badge-btn" data-badge="verified">
+                  <span class="badge-dot dot-verified">
+                    <svg viewBox="0 0 256 256" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="44">
+                      <polyline points="216 72 104 184 48 128"/>
+                    </svg>
+                  </span>
+                  <span>Verified</span>
+                </button>
+                <button class="badge-btn" data-badge="story">
+                  <span class="badge-dot dot-story"></span>
+                  <span>Story</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Smart Persona & Generation Toggles -->
+            <div class="settings-box">
+              <div class="setting-row">
+                <span>Sync matching Name & Role (Text Layers)</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-persona" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-row">
+                <span>Ensure unique avatars across selection</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-unique" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Generator Actions -->
+            <div class="generator-actions">
+              <button class="secondary-btn" id="btn-insert-stack">
+                <!-- Duotone: UsersThree -->
+                <svg viewBox="0 0 256 256">
+                  <path d="M128,144a40,40,0,1,0-40-40A40,40,0,0,0,128,144Z" fill="currentColor" opacity="0.2"/>
+                  <circle cx="128" cy="104" r="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <path d="M48,208a80,80,0,0,1,160,0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <circle cx="48" cy="120" r="28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <circle cx="208" cy="120" r="28" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                </svg>
+                Insert 4-Avatar Stack
+              </button>
+
+              <button class="secondary-btn" id="btn-create-component">
+                <!-- Duotone: Component -->
+                <svg viewBox="0 0 256 256">
+                  <rect x="32" y="32" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
+                  <rect x="32" y="32" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <rect x="144" y="144" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
+                  <rect x="144" y="144" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <polygon points="184 32 224 104 144 104 184 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                </svg>
+                Create Component Set
+              </button>
+            </div>
+
+            <!-- Engine Status & Offline Engine -->
+            <div class="engine-status">
+              <span>Deterministic Procedural Engine</span>
+              <div class="status-badge">
+                <!-- Duotone: ShieldCheck -->
+                <svg viewBox="0 0 256 256">
+                  <path d="M208,40H48A16,16,0,0,0,32,56v56c0,88,88,116,96,118,8-2,96-30,96-118V56A16,16,0,0,0,208,40Z" fill="currentColor" opacity="0.2"/>
+                  <path d="M208,40H48A16,16,0,0,0,32,56v56c0,88,88,116,96,118,8-2,96-30,96-118V56A16,16,0,0,0,208,40Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                  <polyline points="88 128 112 152 168 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+                </svg>
+                <span>0ms Offline Ready</span>
+              </div>
+            </div>
+
+            <!-- Headless Quick Actions Helper -->
+            <div class="shortcut-guide">
+              <div class="shortcut-icon">
+                <!-- Duotone: Command -->
+                <svg viewBox="0 0 256 256">
+                  <rect x="40" y="40" width="176" height="176" rx="24" fill="currentColor" opacity="0.2"/>
+                  <path d="M180,80a28,28,0,1,0-28,28h8V148h-8a28,28,0,1,0,28,28V168H104v8a28,28,0,1,0,28-28h-8V108h8a28,28,0,1,0-28-28V88h48v8A28,28,0,0,0,180,80Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+                </svg>
+              </div>
+              <div class="shortcut-text">
+                <strong>Headless Quick Add:</strong> Press <span class="kbd">Cmd + /</span> in Figma and search <em>"Quick Fill"</em> to populate shapes instantly without opening this window!
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Screen 2: Gallery Browser -->
+    <div class="screen" id="screen-gallery">
+      <div class="gallery-nav-wrapper">
+        <button class="nav-arrow-btn prev hidden" id="nav-arrow-prev" title="Scroll left" aria-label="Previous categories">
+          <!-- Phosphor Duotone: CaretLeft -->
+          <svg viewBox="0 0 256 256" fill="currentColor">
+            <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/>
+          </svg>
+        </button>
+
+        <nav class="gallery-nav" id="gallery-nav">
+          <button class="cat-tab active" data-cat="popular">Popular</button>
+          <button class="cat-tab" data-cat="office">Office</button>
+          <button class="cat-tab" data-cat="everyday">Everyday</button>
+          <button class="cat-tab" data-cat="sculpted">3D & Sculpted</button>
+          <button class="cat-tab" data-cat="illustrated">Sketch B&W</button>
+          <button class="cat-tab" data-cat="cartoon">Cartoon</button>
+          <button class="cat-tab" data-cat="memoji">Memoji</button>
+          <button class="cat-tab" data-cat="doodles">Comic Color</button>
+          <button class="cat-tab" data-cat="company">Company Logos</button>
+          <button class="cat-tab" data-cat="abstract">Abstract</button>
+          <button class="cat-tab" data-cat="quiet">Quiet Avatars</button>
+          <button class="cat-tab" data-cat="cyber">Cyber</button>
+          <button class="cat-tab" data-cat="pixel">Pixel</button>
+        </nav>
+
+        <button class="nav-arrow-btn next" id="nav-arrow-next" title="Scroll right" aria-label="Next categories">
+          <!-- Phosphor Duotone: CaretRight -->
+          <svg viewBox="0 0 256 256" fill="currentColor">
+            <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <main class="grid-container" id="grid-container">
+        <div class="avatar-grid" id="avatar-grid"></div>
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span>Infinite Seed Pool</span>
+    <span class="footer-link" id="footer-seed-link">
+      <!-- Duotone: Shuffle -->
+      <svg viewBox="0 0 256 256">
+        <polyline points="160 40 216 40 216 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <line x1="40" y1="216" x2="216" y2="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <polyline points="160 216 216 216 216 160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <line x1="40" y1="40" x2="96" y2="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <line x1="160" y1="160" x2="216" y2="216" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+      </svg>
+      Roll 1000+ Seeds
+    </span>
+  </footer>
+  <!-- Onboarding Modal -->
+  <div class="onboarding-overlay" id="onboarding-overlay">
+    <div class="onboarding-card">
+      <div class="onboarding-header">
+        <div class="onboarding-pill">
+          <!-- Duotone: Compass -->
+          <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm36-120-56,20-20,56,56-20ZM128,140a12,12,0,1,1,12-12A12,12,0,0,1,128,140Z"/>
+          </svg>
+          <span>Getting Started</span>
+        </div>
+        <button class="icon-btn" id="btn-close-onboarding" title="Skip" style="width:24px; height:24px;">
+          <svg width="13" height="13" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="onboarding-body">
+        <!-- Slide 1: Welcome -->
+        <div class="onboarding-slide active" data-slide="0">
+          <div class="onboarding-illustration onboarding-illustration--brand">
+            <svg class="onboarding-illustration-scene" viewBox="0 0 320 218" fill="none">
+              <circle cx="52" cy="46" r="20" fill="var(--primary)" opacity="0.1"/>
+              <circle cx="270" cy="42" r="14" fill="var(--primary)" opacity="0.14"/>
+              <circle cx="40" cy="168" r="16" fill="var(--primary)" opacity="0.12"/>
+              <circle cx="278" cy="176" r="22" fill="var(--primary)" opacity="0.1"/>
+              <circle cx="160" cy="24" r="8" fill="var(--primary)" opacity="0.18"/>
+              <circle cx="160" cy="196" r="8" fill="var(--primary)" opacity="0.18"/>
+              <circle cx="86" cy="100" r="6" fill="var(--primary)" opacity="0.16"/>
+              <circle cx="236" cy="112" r="6" fill="var(--primary)" opacity="0.16"/>
+            </svg>
+            <svg class="onboarding-illustration-mark" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip-brand-onboarding)">
+                <rect width="128" height="128" rx="30" transform="matrix(1 0 0 -1 0 128)" fill="url(#grad-brand-onboarding)"/>
+                <path d="M10.2397 125.736C10.2435 126.007 10.3007 126.275 10.4079 126.524C10.5152 126.773 10.6704 126.998 10.8647 127.187C11.0591 127.376 11.2887 127.525 11.5406 127.625C11.7924 127.725 12.0616 127.775 12.3326 127.771H108.659C108.931 127.775 109.2 127.726 109.452 127.626C109.704 127.526 109.934 127.377 110.129 127.188C110.324 126.999 110.479 126.774 110.587 126.524C110.694 126.275 110.751 126.007 110.755 125.736V123.307C110.803 122.574 110.9 118.923 108.493 114.883C106.974 112.335 104.77 110.136 101.942 108.343C98.5206 106.173 94.1682 104.604 88.903 103.659C86.2301 103.284 83.5788 102.769 80.9602 102.114C73.9964 100.336 73.3878 98.7619 73.3825 98.7461C73.3415 98.5909 73.2829 98.4409 73.2079 98.2989C73.1497 98.0079 73.0095 96.9019 73.2794 93.9412C73.962 86.4191 77.9969 81.9741 81.238 78.4023C82.2593 77.2778 83.225 76.2115 83.9685 75.1691C87.1779 70.6711 87.4743 65.5515 87.4875 65.234C87.4996 64.6714 87.4219 64.1105 87.2573 63.5724C86.9398 62.5934 86.3498 61.9849 85.9159 61.5351C85.8133 61.432 85.7136 61.3261 85.6169 61.2176C85.5851 61.1805 85.5005 61.08 85.5772 60.5746C85.8367 58.9467 86.0159 57.3069 86.1143 55.6613C86.2625 53.0102 86.3762 49.0467 85.691 45.1865C85.5906 44.4491 85.4385 43.7197 85.2359 43.0037C84.5162 40.3455 83.352 38.0789 81.7434 36.2039C81.4656 35.8996 74.724 28.7955 55.1528 27.3403C52.4461 27.1392 49.7711 27.2477 47.1359 27.3827C46.3566 27.4002 45.581 27.4959 44.8208 27.6684C42.7994 28.1896 42.2596 29.4702 42.1194 30.1872C41.8839 31.3779 42.2967 32.2986 42.5692 32.9125C42.6089 32.9998 42.6591 33.1082 42.5718 33.394C42.1194 34.0978 41.4024 34.7328 40.6748 35.3334C40.4631 35.5107 35.5577 39.744 35.2878 45.2711C34.5602 49.4754 34.6132 56.0238 35.4731 60.5508C35.526 60.8022 35.5974 61.1726 35.4783 61.424C34.5523 62.2521 33.5046 63.1914 33.5072 65.3345C33.5178 65.5515 33.8168 70.6685 37.0262 75.1691C37.767 76.2115 38.7327 77.2751 39.7514 78.3996L39.7567 78.4023C42.9978 81.9741 47.0327 86.4191 47.7153 93.9386C47.9825 96.9019 47.8423 98.0052 47.7868 98.2989C47.7109 98.4408 47.6514 98.5908 47.6095 98.7461C47.6068 98.7619 47.0009 100.331 40.0689 102.106C36.0684 103.13 32.1314 103.654 32.0123 103.667C26.8953 104.533 22.5693 106.064 19.1536 108.221C16.3357 110.001 14.1265 112.208 12.5919 114.775C10.1366 118.876 10.2027 122.611 10.2371 123.294L10.2397 125.736Z" fill="#97029C" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+                <g opacity="0.2">
+                  <path d="M16.0119 125.996C16.0156 126.263 16.0719 126.527 16.1775 126.772C16.2831 127.017 16.4359 127.239 16.6273 127.425C16.8186 127.611 17.0448 127.757 17.2928 127.856C17.5407 127.955 17.8057 128.004 18.0726 128H112.921C113.188 128.004 113.453 127.955 113.701 127.857C113.95 127.758 114.176 127.612 114.368 127.426C114.559 127.24 114.712 127.018 114.818 126.772C114.924 126.527 114.98 126.263 114.984 125.996V123.605C115.031 122.883 115.127 119.288 112.757 115.31C111.261 112.801 109.091 110.636 106.306 108.869C102.937 106.733 98.6519 105.188 93.4675 104.258C90.8356 103.889 88.225 103.381 85.6467 102.737C78.7897 100.986 78.1905 99.4356 78.1853 99.42C78.1449 99.2672 78.0872 99.1195 78.0134 98.9797C77.9561 98.6931 77.818 97.6041 78.0837 94.6888C78.7559 87.2821 82.7288 82.9052 85.9202 79.3881C86.9258 78.2809 87.8767 77.231 88.6088 76.2045C91.7689 71.7755 92.0607 66.7344 92.0737 66.4217C92.0857 65.8678 92.0091 65.3155 91.8471 64.7856C91.5345 63.8217 90.9535 63.2225 90.5262 62.7796C90.4253 62.6781 90.3271 62.5738 90.2318 62.4669C90.2006 62.4305 90.1172 62.3315 90.1928 61.8339C90.4483 60.2308 90.6248 58.6162 90.7216 56.9959C90.8675 54.3854 90.9795 50.4827 90.3048 46.6816C90.206 45.9556 90.0563 45.2374 89.8567 44.5323C89.1481 41.9149 88.0018 39.683 86.4178 37.8368C86.1443 37.5372 79.5062 30.542 60.2354 29.1091C57.5703 28.9111 54.9364 29.018 52.3416 29.1508C51.5742 29.1681 50.8106 29.2623 50.062 29.4322C48.0717 29.9454 47.5402 31.2064 47.4021 31.9124C47.1702 33.0848 47.5767 33.9914 47.845 34.5958C47.8841 34.6818 47.9336 34.7886 47.8476 35.07C47.4021 35.763 46.6961 36.3882 45.9797 36.9796C45.7712 37.1542 40.9412 41.3226 40.6754 46.765C39.959 50.9048 40.0111 57.3528 40.8578 61.8104C40.9099 62.0579 40.9803 62.4226 40.863 62.6701C39.9512 63.4856 38.9195 64.4105 38.9221 66.5207C38.9326 66.7344 39.2269 71.7729 42.3871 76.2045C43.1165 77.231 44.0674 78.2783 45.0704 79.3855L45.0757 79.3881C48.267 82.9052 52.24 87.2821 52.9121 94.6862C53.1753 97.6041 53.0372 98.6905 52.9825 98.9797C52.9078 99.1194 52.8492 99.2671 52.8079 99.42C52.8053 99.4356 52.2087 100.981 45.3831 102.729C41.444 103.737 37.5674 104.253 37.4502 104.266C32.4117 105.118 28.1522 106.626 24.7888 108.749C22.0143 110.503 19.8389 112.676 18.3279 115.203C15.9103 119.241 15.9754 122.919 16.0093 123.592L16.0119 125.996Z" fill="white" stroke="white" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <defs>
+                <linearGradient id="grad-brand-onboarding" x1="1.19209e-07" y1="128" x2="128" y2="1.19209e-07" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#B018B6"/>
+                  <stop offset="1" stop-color="#D100D8"/>
+                </linearGradient>
+                <clipPath id="clip-brand-onboarding">
+                  <rect width="128" height="128" rx="30" transform="matrix(1 0 0 -1 0 128)" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+          <div class="onboarding-title">Welcome to Avatarly</div>
+          <div class="onboarding-desc">Fill any Figma shape with high-quality avatars, logos, and placeholders. Fully self-hosted with zero third-party dependencies.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Stack -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M220,169.09l-92,53.65L36,169.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M220,121.09l-92,53.65L36,121.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M28,86.91l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,0,0,0-13.82l-96-56a8,8,0,0,0-8.06,0l-96,56a8,8,0,0,0,0,13.82Z"/></svg>
+              <span>12 curated avatar collections, 1,198 images</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Lightning -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M213.85,125.46l-112,120a8,8,0,0,1-13.69-7l14.66-73.33L45.19,143.49a8,8,0,0,1-3-13l112-120a8,8,0,0,1,13.69,7L153.18,90.9l57.63,21.61a8,8,0,0,1,3,12.95Z"/></svg>
+              <span>One-click fill for entire frames and tables</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Shuffle -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M237.66,178.34a8,8,0,0,1,0,11.32l-24,24a8,8,0,0,1-11.32-11.32L212.69,192H200.94a72.12,72.12,0,0,1-58.59-30.15l-14.28-20.1L112,165.29A40,40,0,0,1,83.06,176H32a8,8,0,0,1,0-16H83.06a24,24,0,0,0,17.37-7.44l22.13-23.29L100.43,97.34A40,40,0,0,1,83.06,80H32a8,8,0,0,1,0-16H83.06a56.06,56.06,0,0,1,45.51,23.4L142.68,107l14.28-20.1A72.12,72.12,0,0,1,200.94,64h11.75l-10.35-10.34a8,8,0,0,1,11.32-11.32l24,24a8,8,0,0,1,0,11.32l-24,24a8,8,0,0,1-11.32-11.32L212.69,80H200.94A56.06,56.06,0,0,0,155.43,103.4l-14.28,20.1,14.28,20.1A56.06,56.06,0,0,0,200.94,176h11.75l-10.35-10.34A8,8,0,0,1,237.66,178.34Z"/></svg>
+              <span>Instant shuffle and re-roll without repeats</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: How It Works -->
+        <div class="onboarding-slide" data-slide="1">
+          <div class="onboarding-illustration">
+            <svg viewBox="0 0 320 218" fill="none">
+              <line x1="103" y1="96" x2="147" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+              <line x1="213" y1="96" x2="257" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+
+              <rect x="36" y="60" width="72" height="72" rx="18" fill="var(--bg-primary)"/>
+              <rect x="36" y="60" width="72" height="72" rx="18" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="5 5"/>
+              <circle cx="72" cy="96" r="16" fill="var(--primary)" opacity="0.35"/>
+              <circle cx="72" cy="26" r="12" fill="var(--primary)"/>
+              <text x="72" y="31" font-family="Archivo, sans-serif" font-size="13" font-weight="800" fill="#FFFFFF" text-anchor="middle">1</text>
+
+              <rect x="146" y="60" width="72" height="72" rx="18" fill="var(--bg-primary)" stroke="var(--border)" stroke-width="1.5"/>
+              <circle cx="171" cy="86" r="9" fill="var(--primary)"/>
+              <circle cx="193" cy="86" r="9" fill="#EC4899"/>
+              <circle cx="182" cy="106" r="9" fill="#10B981"/>
+              <circle cx="182" cy="26" r="12" fill="var(--primary)"/>
+              <text x="182" y="31" font-family="Archivo, sans-serif" font-size="13" font-weight="800" fill="#FFFFFF" text-anchor="middle">2</text>
+
+              <rect x="256" y="60" width="72" height="72" rx="18" fill="var(--primary)"/>
+              <circle cx="292" cy="96" r="18" fill="#FFFFFF" opacity="0.25"/>
+              <path d="M283,96 L289,102 L302,88" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <circle cx="292" cy="26" r="12" fill="var(--primary)"/>
+              <text x="292" y="31" font-family="Archivo, sans-serif" font-size="13" font-weight="800" fill="#FFFFFF" text-anchor="middle">3</text>
+
+              <text x="72" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Select</text>
+              <text x="182" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Pick Style</text>
+              <text x="292" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Fill</text>
+            </svg>
+          </div>
+          <div class="onboarding-title">How It Works</div>
+          <div class="onboarding-desc">Three steps to populate your mockup with diverse, realistic content.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Selection -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M152,32V56h48a8,8,0,0,1,8,8v48h24V32Zm0,0" opacity="0.2"/><path d="M208,32H152a8,8,0,0,0-8,8V56H104V40a8,8,0,0,0-8-8H48A16,16,0,0,0,32,48V96a8,8,0,0,0,8,8H56v48H40a8,8,0,0,0-8,8v48a16,16,0,0,0,16,16H96a8,8,0,0,0,8-8V200h48v16a8,8,0,0,0,8,8h48a16,16,0,0,0,16-16V160a8,8,0,0,0-8-8H200V104h16a8,8,0,0,0,8-8V48A16,16,0,0,0,208,32Z"/></svg>
+              <span>Select shapes, frames, or entire components on canvas</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Palette -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M200.77,53.89A103.27,103.27,0,0,0,128,24h-1.07A104,104,0,0,0,24,128c0,43,26.58,79.57,69.36,95.36C112.93,230.13,134.91,224,152,208c17.33-16.29,26-37.3,26-61.06,0-24.17-9-46.06-26.05-63.17A104.07,104.07,0,0,0,200.77,53.89Z" opacity="0.2"/><circle cx="128" cy="76" r="12"/><circle cx="84" cy="108" r="12"/><circle cx="84" cy="156" r="12"/><circle cx="128" cy="188" r="12"/><circle cx="172" cy="156" r="12"/><circle cx="172" cy="108" r="12"/></svg>
+              <span>Pick a style: Office, Sculpted, Cartoon, Memoji, and more</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Play -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M228.23,134.69l-144,87.94A8,8,0,0,1,72,216V40a8,8,0,0,1,12.23-6.77l144,88a8,8,0,0,1,0,13.54Z"/></svg>
+              <span>Click Fill Selection -- every shape gets a unique avatar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Collections Overview -->
+        <div class="onboarding-slide" data-slide="2">
+          <div class="onboarding-illustration">
+            <svg viewBox="0 0 320 218" fill="none">
+              <rect x="30" y="27" width="60" height="52" rx="12" fill="var(--primary)"/>
+              <circle cx="60" cy="53" r="14" fill="#FFFFFF" opacity="0.9"/>
+              <rect x="100" y="27" width="60" height="52" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <path d="M118,60 L128,46 L138,60 Z" fill="var(--primary)"/>
+              <rect x="170" y="27" width="60" height="52" rx="12" fill="var(--primary)" opacity="0.28"/>
+              <path d="M188,44 L212,44 M188,53 L212,53 M188,62 L204,62" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+              <rect x="240" y="27" width="50" height="52" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <rect x="253" y="42" width="10" height="10" fill="var(--primary)"/><rect x="267" y="42" width="10" height="10" fill="var(--primary)" opacity="0.5"/><rect x="253" y="56" width="10" height="10" fill="var(--primary)" opacity="0.5"/><rect x="267" y="56" width="10" height="10" fill="var(--primary)"/>
+
+              <rect x="30" y="89" width="60" height="52" rx="12" fill="var(--primary)" opacity="0.28"/>
+              <path d="M46,124 Q60,102 74,124" stroke="var(--primary)" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <rect x="100" y="89" width="60" height="52" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <circle cx="130" cy="115" r="6" fill="var(--primary)"/><circle cx="118" cy="115" r="4" fill="var(--primary)" opacity="0.5"/><circle cx="142" cy="115" r="4" fill="var(--primary)" opacity="0.5"/>
+              <rect x="170" y="89" width="60" height="52" rx="12" fill="var(--primary)"/>
+              <path d="M188,105 L212,105 L212,127 L188,127 Z M194,111 L206,111 M194,117 L206,117" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <rect x="240" y="89" width="50" height="52" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <path d="M265,102 L278,124 L252,124 Z" fill="var(--primary)"/>
+
+              <rect x="30" y="151" width="60" height="42" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <rect x="46" y="164" width="28" height="16" rx="4" fill="var(--primary)"/>
+              <rect x="100" y="151" width="60" height="42" rx="12" fill="var(--primary)" opacity="0.28"/>
+              <circle cx="130" cy="172" r="12" fill="none" stroke="var(--primary)" stroke-width="3.5"/>
+              <rect x="170" y="151" width="60" height="42" rx="12" fill="var(--primary)" opacity="0.18"/>
+              <path d="M186,180 L196,164 L206,174 L214,164" stroke="var(--primary)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="240" y="151" width="50" height="42" rx="12" fill="var(--primary)" opacity="0.28"/>
+              <circle cx="258" cy="172" r="5" fill="var(--primary)"/><circle cx="272" cy="172" r="5" fill="var(--primary)"/>
+            </svg>
+          </div>
+          <div class="onboarding-title">12 Built-In Collections</div>
+          <div class="onboarding-desc">From photorealistic office headshots to pixel-mosaic art -- every style ships with the plugin, no API calls needed.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Briefcase -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><rect x="32" y="72" width="192" height="144" rx="8" opacity="0.2"/><path d="M216,64H176V56a24,24,0,0,0-24-24H104A24,24,0,0,0,80,56v8H40A16,16,0,0,0,24,80V208a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64ZM96,56a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Z"/></svg>
+              <span>Office, Everyday -- realistic professional headshots</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Cube -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M224,80v96l-96,56L32,176V80L128,24Z" opacity="0.2"/><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15Z"/></svg>
+              <span>Sculpted 3D, Cartoon, Memoji, Cyber robots</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: CircleHalf -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192V40a88,88,0,0,1,0,176Z"/></svg>
+              <span>Sketch B&W, Comic Color, Abstract, Quiet, Pixel, Logos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Filters, Shuffle & Personas -->
+        <div class="onboarding-slide" data-slide="3">
+          <div class="onboarding-illustration">
+            <svg viewBox="0 0 320 218" fill="none">
+              <line x1="103" y1="96" x2="147" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+              <line x1="213" y1="96" x2="257" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+
+              <rect x="36" y="60" width="72" height="72" rx="18" fill="var(--primary)" opacity="0.16"/>
+              <line x1="55" y1="82" x2="89" y2="82" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="66" cy="82" r="6" fill="var(--primary)"/>
+              <line x1="55" y1="98" x2="89" y2="98" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="78" cy="98" r="6" fill="var(--primary)"/>
+              <line x1="55" y1="114" x2="89" y2="114" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="70" cy="114" r="6" fill="var(--primary)"/>
+
+              <rect x="146" y="60" width="72" height="72" rx="18" fill="var(--primary)"/>
+              <rect x="163" y="77" width="16" height="16" rx="4" fill="#FFFFFF"/><circle cx="171" cy="85" r="2.4" fill="var(--primary)"/>
+              <rect x="185" y="99" width="16" height="16" rx="4" fill="#FFFFFF"/><circle cx="193" cy="107" r="2.4" fill="var(--primary)"/><circle cx="189" cy="103" r="1.6" fill="var(--primary)"/><circle cx="197" cy="103" r="1.6" fill="var(--primary)"/><circle cx="189" cy="111" r="1.6" fill="var(--primary)"/><circle cx="197" cy="111" r="1.6" fill="var(--primary)"/>
+              <rect x="163" y="99" width="16" height="16" rx="4" fill="#FFFFFF" opacity="0.6"/>
+              <path d="M203,74 L211,74 L211,82" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <rect x="256" y="60" width="72" height="72" rx="18" fill="var(--primary)" opacity="0.16"/>
+              <rect x="270" y="76" width="44" height="32" rx="6" fill="var(--primary)"/>
+              <circle cx="281" cy="88" r="5" fill="#FFFFFF"/>
+              <line x1="291" y1="86" x2="306" y2="86" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="291" y1="93" x2="302" y2="93" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+
+              <text x="72" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Filters</text>
+              <text x="182" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Shuffle</text>
+              <text x="292" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Personas</text>
+            </svg>
+          </div>
+          <div class="onboarding-title">Filters, Shuffle & Personas</div>
+          <div class="onboarding-desc">Fine-tune every fill without ever leaving the panel.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: SlidersHorizontal -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16H137a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z"/></svg>
+              <span>Filter by vibe -- Female, Male, Professional, Creative, Tech, Casual</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: ArrowsClockwise -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M224,64v56a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h37.15A79.9,79.9,0,0,0,58.62,66.53a8,8,0,0,1-11.24-11.4A96,96,0,0,1,208,120.86V64a8,8,0,0,1,16,0ZM198.62,189.47a80,80,0,0,1-138.53-54.4A8,8,0,0,0,60.85,127H8a8,8,0,0,0-8,8v56a8,8,0,0,0,16,0V150.14a96,96,0,0,0,161.38,45.33,8,8,0,0,0-11.24-11.4,79.86,79.86,0,0,1-42.14 5.4Z"/></svg>
+              <span>Roll 1,000+ seeds for endless unique combinations</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: IdentificationCard -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><rect x="24" y="56" width="208" height="144" rx="8" opacity="0.2"/><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm-48,136H80a8,8,0,0,1-7.48-5.18,56,56,0,0,1,24-62.91A36,36,0,1,1,152.5,116a56.08,56.08,0,0,1,24,62.91A8,8,0,0,1,176,184Z"/></svg>
+              <span>Persona sync auto-fills matching names and job titles</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5: Pro Features -->
+        <div class="onboarding-slide" data-slide="4">
+          <div class="onboarding-illustration">
+            <svg viewBox="0 0 320 218" fill="none">
+              <circle cx="160" cy="104" r="58" fill="none" stroke="var(--primary)" stroke-width="4" stroke-dasharray="16 10" opacity="0.35"/>
+              <circle cx="160" cy="104" r="42" fill="var(--primary)" opacity="0.16"/>
+              <circle cx="160" cy="104" r="30" fill="var(--primary)"/>
+              <circle cx="151" cy="96" r="7" fill="#FFFFFF"/>
+              <path d="M136,120 Q160,102 184,120" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <circle cx="188" cy="128" r="10" fill="var(--success)" stroke="var(--bg-primary)" stroke-width="3"/>
+
+              <rect x="30" y="34" width="52" height="40" rx="12" fill="var(--primary)" opacity="0.16"/>
+              <path d="M56,44 L56,64 M48,56 L56,64 L64,56" stroke="var(--primary)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <rect x="238" y="34" width="52" height="40" rx="12" fill="var(--primary)" opacity="0.16"/>
+              <rect x="254" y="46" width="6" height="16" rx="2" fill="var(--primary)"/>
+              <rect x="268" y="46" width="6" height="16" rx="2" fill="var(--primary)"/>
+              <rect x="248" y="50" width="24" height="8" rx="2" fill="var(--primary)"/>
+
+              <rect x="30" y="150" width="60" height="36" rx="12" fill="var(--primary)" opacity="0.16"/>
+              <circle cx="50" cy="168" r="8" fill="var(--primary)"/>
+              <line x1="64" y1="164" x2="78" y2="164" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="64" y1="172" x2="74" y2="172" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+
+              <rect x="232" y="150" width="58" height="36" rx="12" fill="var(--primary)" opacity="0.16"/>
+              <path d="M254,178 L254,158 M246,166 L254,158 L262,166" stroke="var(--primary)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="266" y1="178" x2="278" y2="178" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="onboarding-title">Power Features</div>
+          <div class="onboarding-desc">Status badges, component sets, asset export, and headless quick commands for fast iteration.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: ShieldCheck -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M224,56v56c0,52.72-25.52,84.67-46.93,102.19-23.06,18.86-46,26.07-47.07,26.4a8,8,0,0,1-4,0c-1.07-.33-24-7.54-47.07-26.4C57.52,196.67,32,164.72,32,112V56a8,8,0,0,1,8-8H216A8,8,0,0,1,224,56Z" opacity="0.2"/><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34Z"/></svg>
+              <span>Online, Away, Verified, and Story Ring status overlays</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: DownloadSimple -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48H200V152a8,8,0,0,1,16,0Z"/><path d="M173.66,133.66l-40,40a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L120,148.69V40a8,8,0,0,1,16,0V148.69l26.34-26.35a8,8,0,0,1,11.32,11.32Z"/></svg>
+              <span>One-click copy of 4K image URLs or raw SVG code</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Command -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M180,48a28,28,0,0,0-28,28v24H104V76A28,28,0,1,0,76,104h24v48H76a28,28,0,1,0,28,28V156h48v24a28,28,0,1,0,28-28H156V104h24a28,28,0,0,0,0-56Zm-76,56h48v48H104Zm76-24H156V76a12,12,0,1,1,24,0Zm-104,0a12,12,0,0,1,0-24V76A12,12,0,0,0,76,76h0V80Zm0,104a12,12,0,0,1,0-24h4v4A12,12,0,0,1,76,180Zm104,0a12,12,0,0,1-12-12V156h12a12,12,0,0,1,0,24Z"/></svg>
+              <span>Cmd + / quick commands and component set builder</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="onboarding-footer">
+        <div class="onboarding-dots" id="onboarding-dots">
+          <div class="onboarding-dot active" data-step="0"></div>
+          <div class="onboarding-dot" data-step="1"></div>
+          <div class="onboarding-dot" data-step="2"></div>
+          <div class="onboarding-dot" data-step="3"></div>
+          <div class="onboarding-dot" data-step="4"></div>
+        </div>
+        <div class="onboarding-actions">
+          <button class="onboarding-btn ghost" id="btn-onboarding-back" style="display:none;">
+            <!-- CaretLeft -->
+            <svg viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
+            Back
+          </button>
+          <button class="onboarding-btn primary" id="btn-onboarding-next">
+            Next
+            <!-- CaretRight -->
+            <svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <!-- Duotone: CheckCircle -->
+    <svg viewBox="0 0 256 256">
+      <circle cx="128" cy="128" r="96" fill="currentColor" opacity="0.25"/>
+      <circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+      <polyline points="88 128 112 152 168 96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="20"/>
+    </svg>
+    <span id="toast-text">Avatar applied!</span>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────── */
+/*  1. Infinite Procedural Seed & Palette Generator    */
+/* ─────────────────────────────────────────────────── */
+// Avatarly Avatar Collections from GitHub Repository: MUZEEBURRAHAMAN/ui-faces-avatars
+const REPO_CDN_BASE = 'https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/';
+const REPO_RAW_BASE = 'https://raw.githubusercontent.com/MUZEEBURRAHAMAN/ui-faces-avatars/main/collections/';
+
+// Bump this whenever CDN assets are regenerated so browsers stop serving
+// stale cached copies of previously-broken images (jsDelivr sets long
+// cache lifetimes, so a server-side fix alone doesn't reach clients that
+// already fetched the old file once).
+const ASSET_CACHE_VERSION = 'v2';
+function withCacheBust(url) {
+  if (typeof url === 'string' && (url.startsWith(REPO_CDN_BASE) || url.startsWith(REPO_RAW_BASE))) {
+    return url + (url.includes('?') ? '&' : '?') + 'cb=' + ASSET_CACHE_VERSION;
+  }
+  return url;
+}
+
+const REPO_COLLECTIONS = {
+  office: { id: 'office-avatars', count: 100, name: 'Office Avatars' },
+  everyday: { id: 'everyday-avatars', count: 100, name: 'Everyday Avatars' },
+  sculpted: { id: 'sculpted-avatars', count: 100, name: 'Sculpted Avatars' },
+  illustrated: { id: 'illustrated-avatars', count: 100, name: 'Sketch B&W' },
+  cartoon: { id: 'cartoon-avatars', count: 100, name: 'Cartoon Avatars' },
+  doodles: { id: 'doodle-avatars', count: 100, name: 'Comic Color' },
+  abstract: { id: 'abstract-avatars', count: 100, name: 'Abstract Avatars' },
+  quiet: { id: 'quiet-avatars', count: 100, name: 'Quiet Avatars' },
+  company: { id: 'company-avatars', count: 100, name: 'Company Logos' },
+  memoji: { id: 'memoji-avatars', count: 98, name: 'Memoji Avatars' },
+  cyber: { id: 'cyber-avatars', count: 100, name: 'Cyber Avatars' },
+  pixel: { id: 'pixel-avatars', count: 100, name: 'Pixel Avatars' }
+};
+
+function getRepoAvatarUrl(collectionKey, index, is4k = false) {
+  const collection = REPO_COLLECTIONS[collectionKey];
+  if (!collection) return null;
+  const normalizedIndex = (((index - 1) % collection.count) + collection.count) % collection.count + 1;
+  const padded = String(normalizedIndex).padStart(3, '0');
+  if (is4k) {
+    return `${REPO_CDN_BASE}${collection.id}/4k/${collection.id}-${padded}.png`;
+  }
+  return `${REPO_CDN_BASE}${collection.id}/preview/${collection.id}-${padded}.jpg`;
+}
+
+function getRepo4kUrl(previewUrl) {
+  if (typeof previewUrl === 'string' && previewUrl.includes('/preview/') && previewUrl.endsWith('.jpg')) {
+    return previewUrl.replace('/preview/', '/4k/').replace('.jpg', '.png');
+  }
+  return previewUrl;
+}
+
+// Seed Dictionary for 1000+ Procedural Generation
+const SEED_NAMES = [
+  'Aura', 'Nova', 'Chronos', 'Vex', 'Zenith', 'Kairo', 'Sora', 'Lyra',
+  'Orion', 'Astrid', 'Milo', 'Ember', 'Zephyr', 'Rune', 'Felix', 'Luna',
+  'Jasper', 'Selene', 'Echo', 'Talon', 'Phoenix', 'Atlas', 'Rowan', 'Cassian',
+  'Freya', 'Gideon', 'Iris', 'Kael', 'Maeve', 'Nico', 'Ronan', 'Sylvie',
+  'Dante', 'Corin', 'Leona', 'Vesper', 'Alistair', 'Thorne', 'Elysia', 'Callum'
+];
+
+let globalSeedSalt = Math.floor(Math.random() * 99999);
+
+/* ─────────────────────────────────────────────────── */
+/*  2. 100% Offline Procedural Vector Fallback Engine   */
+/* ─────────────────────────────────────────────────── */
+const GRADIENT_PALETTES = [
+  ['#3B82F6', '#8B5CF6'], ['#EC4899', '#8B5CF6'], ['#10B981', '#06B6D4'],
+  ['#F59E0B', '#EF4444'], ['#6366F1', '#D946EF'], ['#14B8A6', '#3B82F6']
+];
+
+function generateOfflineSvg(seed = 'forge') {
+  const hash = Array.from(seed).reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const pal = GRADIENT_PALETTES[hash % GRADIENT_PALETTES.length];
+  const c1 = pal[0];
+  const c2 = pal[1];
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <defs>
+      <linearGradient id="g_${hash}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </linearGradient>
+    </defs>
+    <rect width="200" height="200" rx="100" fill="url(#g_${hash})"/>
+    <circle cx="100" cy="85" r="36" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M40 185 C40 135 70 135 100 135 C130 135 160 135 160 185 Z" fill="#FFFFFF" opacity="0.9"/>
+  </svg>`;
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  3. Dynamic Procedural URL Builder (Zero-Duplicate)  */
+/* ─────────────────────────────────────────────────── */
+function generatePresetUrls(preset, filter = 'all', count = 12) {
+  const urls = [];
+  const seenUrls = new Set();
+  const salt = globalSeedSalt;
+
+  let attempt = 0;
+  while (urls.length < count && attempt < count * 35) {
+    const idx = (attempt + salt);
+    const seedBase = SEED_NAMES[idx % SEED_NAMES.length];
+    const uniqueSeed = seedBase + '_' + filter + '_' + (salt + attempt);
+    let url = null;
+
+    if (REPO_COLLECTIONS[preset]) {
+      const col = REPO_COLLECTIONS[preset];
+      const avatarIndex = ((salt * 13 + attempt * 7) % col.count) + 1;
+      url = getRepoAvatarUrl(preset, avatarIndex);
+    }
+    else {
+      const mixSources = [
+        () => getRepoAvatarUrl('sculpted', ((salt * 3 + attempt * 7) % 100) + 1),
+        () => getRepoAvatarUrl('office', ((salt * 5 + attempt * 11) % 100) + 1),
+        () => getRepoAvatarUrl('illustrated', ((salt * 7 + attempt * 13) % 100) + 1),
+        () => getRepoAvatarUrl('everyday', ((salt * 11 + attempt * 17) % 100) + 1),
+        () => getRepoAvatarUrl('cartoon', ((salt * 13 + attempt * 19) % 100) + 1),
+        () => getRepoAvatarUrl('doodles', ((salt * 17 + attempt * 23) % 100) + 1),
+        () => getRepoAvatarUrl('company', ((salt * 19 + attempt * 29) % 100) + 1),
+        () => getRepoAvatarUrl('abstract', ((salt * 23 + attempt * 31) % 100) + 1),
+        () => getRepoAvatarUrl('quiet', ((salt * 29 + attempt * 37) % 100) + 1)
+      ];
+      const fn = mixSources[attempt % mixSources.length];
+      url = fn();
+    }
+
+    if (url && !seenUrls.has(url)) {
+      seenUrls.add(url);
+      urls.push(url);
+    }
+    attempt++;
+  }
+
+  return urls;
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  4. High-Performance Asset Engine & Non-Destructive */
+/* ─────────────────────────────────────────────────── */
+async function svgToRasterPng(svgText, size = 320) {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        const dataUrl = canvas.toDataURL('image/png');
+        resolve(dataUrl.split(',')[1]);
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve(null);
+      };
+
+      img.src = url;
+    } catch {
+      resolve(null);
+    }
+  });
+}
+
+async function fetchAssetWithFallback(url) {
+  if (url.startsWith('data:image/svg+xml')) {
+    try {
+      const svgText = decodeURIComponent(url.replace(/^data:image\/svg\+xml(?:;utf8)?,/, ''));
+      const base64Png = await svgToRasterPng(svgText);
+      return { data: svgText, base64Png, isSvg: true };
+    } catch {
+      const offlineSvg = generateOfflineSvg(url);
+      const base64Png = await svgToRasterPng(offlineSvg);
+      return { data: offlineSvg, base64Png, isSvg: true };
+    }
+  }
+
+  const isSvg = url.endsWith('.svg') || url.includes('/svg?');
+
+  const tryFetch = async (targetUrl) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(targetUrl, { signal: controller.signal });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res;
+  };
+
+  try {
+    let res;
+    try {
+      res = await tryFetch(withCacheBust(url));
+    } catch (e) {
+      if (url.includes(REPO_CDN_BASE)) {
+        try {
+          const localUrl = url.replace(REPO_CDN_BASE, 'avatar-repo/collections/');
+          res = await tryFetch(localUrl);
+        } catch {
+          const rawUrl = url.replace(REPO_CDN_BASE, REPO_RAW_BASE);
+          res = await tryFetch(withCacheBust(rawUrl));
+        }
+      } else {
+        throw e;
+      }
+    }
+
+    if (isSvg) {
+      const svgText = await res.text();
+      const base64Png = await svgToRasterPng(svgText);
+      return { data: svgText, base64Png, isSvg: true };
+    } else {
+      const buffer = await res.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+      }
+      const base64Png = btoa(binary);
+      return { data: base64Png, base64Png, isSvg: false };
+    }
+  } catch {
+    // 100% Zero-Latency Offline Fallback
+    const offlineSvg = generateOfflineSvg(url);
+    const base64Png = await svgToRasterPng(offlineSvg);
+    return { data: offlineSvg, base64Png, isSvg: true };
+  }
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  5. State & Execution Handlers                      */
+/* ─────────────────────────────────────────────────── */
+let selectedPreset = 'sculpted';
+let activeFilter = 'all';
+let activeBadge = 'none';
+let galleryCategory = 'popular';
+let currentSelectionCount = 0;
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function updateSelectionUI(data) {
+  window.lastSelectionData = data;
+  const count = typeof data === 'object' ? (data.count || 0) : (data || 0);
+  const isNested = typeof data === 'object' ? data.isNested : false;
+  const frameName = typeof data === 'object' ? (data.frameName || '') : '';
+  const hasText = typeof data === 'object' ? data.hasText : false;
+
+  currentSelectionCount = count;
+  const card = document.getElementById('selection-card');
+  const title = document.getElementById('sel-title');
+  const desc = document.getElementById('sel-desc');
+  const btnText = document.getElementById('btn-quick-fill-text');
+  const badgeNames = { none: '', online: ' • Online Badge', away: ' • Away Badge', verified: ' • Verified Badge', story: ' • Story Ring' };
+  const badgeLabel = badgeNames[activeBadge] || '';
+
+  if (count > 0) {
+    card.classList.add('has-selection');
+    if (isNested) {
+      title.textContent = `Found ${count} avatar shape${count > 1 ? 's' : ''}`;
+      desc.textContent = (frameName ? `Inside "${frameName}"` : 'Auto-detected inside frame') + badgeLabel;
+      btnText.textContent = `Auto-Fill All ${count} Avatars in Selection`;
+    } else {
+      title.textContent = `${count} layer${count > 1 ? 's' : ''} selected`;
+      desc.textContent = (hasText ? 'Syncs avatars + matching name/roles' : `Ready to auto-fill with unique ${selectedPreset.toUpperCase()} avatars`) + badgeLabel;
+      btnText.textContent = `Quick Fill ${count} Selected Shape${count > 1 ? 's' : ''}`;
+    }
+  } else {
+    card.classList.remove('has-selection');
+    title.textContent = 'No layer selected';
+    desc.textContent = 'Will insert new avatar' + (badgeLabel ? ` (${badgeLabel.replace(' • ', '')})` : ' at canvas center');
+    btnText.textContent = 'Quick Insert New Avatar';
+  }
+}
+
+async function executeQuickFill(preset, isHeadless = false) {
+  try {
+    toast('Generating avatars...');
+    const needed = Math.max(currentSelectionCount, 1);
+    const urls = generatePresetUrls(preset, activeFilter, needed);
+    const syncPersona = document.getElementById('toggle-persona')?.checked ?? true;
+
+    const items = [];
+    for (const url of urls) {
+      const asset = await fetchAssetWithFallback(url);
+      items.push({
+        data: asset.data,
+        base64Png: asset.base64Png,
+        isSvg: asset.isSvg,
+        label: 'Avatarly'
+      });
+    }
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'apply-batch-avatars',
+        items,
+        syncPersona,
+        badgeType: activeBadge,
+        isHeadless
+      }
+    }, '*');
+  } catch (err) {
+    toast('Error: ' + err.message);
+  }
+}
+
+async function insertAvatarStack() {
+  try {
+    toast('Generating team stack...');
+    const urls = generatePresetUrls(selectedPreset, activeFilter, 4);
+    const items = [];
+    for (const url of urls) {
+      const asset = await fetchAssetWithFallback(url);
+      items.push({
+        data: asset.data,
+        base64Png: asset.base64Png,
+        isSvg: asset.isSvg,
+        label: 'Team Member'
+      });
+    }
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'insert-stack',
+        items
+      }
+    }, '*');
+  } catch (err) {
+    toast('Error: ' + err.message);
+  }
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  Robust Clipboard Helper for Figma & Web Sandboxes  */
+/* ─────────────────────────────────────────────────── */
+async function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fallback to execCommand below
+    }
+  }
+
+  try {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  6. Gallery Grid Renderer with Hover Micro-Actions  */
+/* ─────────────────────────────────────────────────── */
+function renderGrid(cat) {
+  const grid = document.getElementById('avatar-grid');
+  grid.innerHTML = '';
+  const presetKey = cat === 'popular' ? 'random' : cat;
+  const urls = generatePresetUrls(presetKey, activeFilter, 36);
+
+  urls.forEach((initialUrl) => {
+    let currentUrl = initialUrl;
+    const card = document.createElement('div');
+    card.className = 'avatar-card loading';
+
+    const img = document.createElement('img');
+    img.className = 'avatar-img';
+    img.loading = 'lazy';
+    img.src = withCacheBust(currentUrl);
+    img.alt = 'Avatar';
+
+    img.onload = () => {
+      img.classList.add('loaded');
+      card.classList.remove('loading');
+    };
+    img.onerror = () => {
+      if (currentUrl.includes(REPO_CDN_BASE)) {
+        const localFallback = currentUrl.replace(REPO_CDN_BASE, 'avatar-repo/collections/');
+        img.onerror = () => {
+          img.src = `data:image/svg+xml;utf8,${encodeURIComponent(generateOfflineSvg(currentUrl))}`;
+          img.classList.add('loaded');
+          card.classList.remove('loading');
+        };
+        img.src = localFallback;
+        return;
+      }
+      img.src = `data:image/svg+xml;utf8,${encodeURIComponent(generateOfflineSvg(currentUrl))}`;
+      img.classList.add('loaded');
+      card.classList.remove('loading');
+    };
+
+    // Micro-actions Overlay (Copy SVG/URL & Re-roll tile)
+    const hoverBar = document.createElement('div');
+    hoverBar.className = 'card-hover-actions';
+
+    const isVector = currentUrl.endsWith('.svg') || currentUrl.includes('/svg?') || currentUrl.startsWith('data:image/svg+xml');
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'card-action-btn';
+    copyBtn.title = isVector ? 'Copy SVG Code' : 'Copy 4K Image URL';
+    copyBtn.innerHTML = isVector
+      ? `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>`
+      : `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M136.37,187.66a8,8,0,0,1,0,11.31l-40,40a56,56,0,0,1-79.2-79.2l40-40a56,56,0,0,1,79.2,0,8,8,0,0,1-11.31,11.32,40,40,0,0,0-56.57,0l-40,40a40,40,0,0,0,56.57,56.57l40-40A8,8,0,0,1,136.37,187.66Zm102.83-171a56,56,0,0,0-79.2,0l-40,40a56,56,0,0,0,79.2,79.2,8,8,0,0,0,11.32-11.31,40,40,0,0,1-56.57-56.57l40-40a40,40,0,0,1,56.57,0,40.1,40.1,0,0,1,0,56.57,8,8,0,0,0,11.31,11.32A56.12,56.12,0,0,0,239.2,16.63Z"/></svg>`;
+
+    copyBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        if (isVector) {
+          const asset = await fetchAssetWithFallback(currentUrl);
+          const ok = await copyToClipboard(asset.data);
+          if (ok) toast('SVG code copied to clipboard');
+          else toast('Failed to copy SVG');
+        } else {
+          const fourKUrl = getRepo4kUrl(currentUrl);
+          const ok = await copyToClipboard(fourKUrl);
+          if (ok) toast('4K image URL copied to clipboard');
+          else toast('Failed to copy URL');
+        }
+      } catch {
+        toast('Failed to copy asset');
+      }
+    });
+
+    const rollBtn = document.createElement('button');
+    rollBtn.className = 'card-action-btn';
+    rollBtn.title = 'Re-roll this tile';
+    rollBtn.innerHTML = `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a96,96,0,0,1-96,96A95.77,95.77,0,0,1,58.82,185.16L40,204V144h60l-22.37,22.37A79.8,79.8,0,1,0,48.42,112.56a8,8,0,1,1-15.84-2.45A96,96,0,0,1,224,128Z"/></svg>`;
+    rollBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const freshSalt = Math.floor(Math.random() * 99999);
+      let freshUrl;
+      if (REPO_COLLECTIONS[presetKey]) {
+        const col = REPO_COLLECTIONS[presetKey];
+        const freshIdx = Math.floor(Math.random() * col.count) + 1;
+        freshUrl = getRepoAvatarUrl(presetKey, freshIdx);
+      } else {
+        const repoKeys = ['sculpted', 'office', 'illustrated', 'everyday', 'cartoon', 'doodles', 'abstract', 'quiet', 'company', 'memoji', 'cyber', 'pixel'];
+        const randKey = repoKeys[Math.floor(Math.random() * repoKeys.length)];
+        const col = REPO_COLLECTIONS[randKey];
+        const freshIdx = Math.floor(Math.random() * col.count) + 1;
+        freshUrl = getRepoAvatarUrl(randKey, freshIdx);
+      }
+      
+      card.classList.add('loading');
+      img.classList.remove('loaded');
+      currentUrl = freshUrl;
+      img.src = withCacheBust(freshUrl);
+      toast('Re-rolled avatar tile');
+    });
+
+    hoverBar.appendChild(copyBtn);
+    hoverBar.appendChild(rollBtn);
+
+    card.appendChild(img);
+    card.appendChild(hoverBar);
+
+    card.addEventListener('click', async () => {
+      try {
+        document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        toast('Applying...');
+        const syncPersona = document.getElementById('toggle-persona')?.checked ?? true;
+        const asset = await fetchAssetWithFallback(currentUrl);
+        parent.postMessage({
+          pluginMessage: {
+            type: 'apply-avatar',
+            data: asset.data,
+            base64Png: asset.base64Png,
+            isSvg: asset.isSvg,
+            syncPersona,
+            badgeType: activeBadge,
+            label: 'Avatarly'
+          }
+        }, '*');
+      } catch {
+        toast('Failed to apply avatar');
+      }
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  7. UI Event Listeners                              */
+/* ─────────────────────────────────────────────────── */
+
+// Top Mode Switcher (Quick Add vs Browse Gallery)
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetScreen = tab.dataset.screen;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    const screenEl = document.getElementById('screen-' + targetScreen);
+    if (screenEl) {
+      screenEl.classList.add('active');
+      if (targetScreen === 'gallery') {
+        renderGrid(galleryCategory);
+        setTimeout(updateGalleryNavArrows, 100);
+      }
+    }
+  });
+});
+
+// Demographic Filter Pills (All, Female, Male, Pro, Casual)
+document.querySelectorAll('.filter-bar .filter-pill').forEach(pill => {
+  pill.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.filter-bar .filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeFilter = pill.dataset.filter || 'all';
+    renderGrid(galleryCategory);
+    toast('Filter: ' + pill.textContent.trim());
+  });
+});
+
+// Style Preset Bento Cards
+document.querySelectorAll('.preset-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedPreset = card.dataset.preset;
+    const nameEl = card.querySelector('.preset-name');
+    if (nameEl) {
+      document.getElementById('preset-count').textContent = nameEl.textContent;
+    }
+    updateSelectionUI(window.lastSelectionData || currentSelectionCount);
+  });
+});
+
+/* ─── Filter Bar Navigation Arrows & Smooth Scrolling ─── */
+const filterBar = document.getElementById('filter-bar');
+const prevFilterArrow = document.getElementById('filter-arrow-prev');
+const nextFilterArrow = document.getElementById('filter-arrow-next');
+
+function updateFilterNavArrows() {
+  if (!filterBar) return;
+  const atStart = filterBar.scrollLeft <= 4;
+  const atEnd = filterBar.scrollLeft + filterBar.clientWidth >= filterBar.scrollWidth - 6;
+  if (prevFilterArrow) prevFilterArrow.classList.toggle('hidden', atStart);
+  if (nextFilterArrow) nextFilterArrow.classList.toggle('hidden', atEnd);
+}
+
+if (prevFilterArrow && filterBar) {
+  prevFilterArrow.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    filterBar.scrollBy({ left: -120, behavior: 'smooth' });
+    setTimeout(updateFilterNavArrows, 200);
+  });
+}
+
+if (nextFilterArrow && filterBar) {
+  nextFilterArrow.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    filterBar.scrollBy({ left: 120, behavior: 'smooth' });
+    setTimeout(updateFilterNavArrows, 200);
+  });
+}
+
+if (filterBar) {
+  filterBar.addEventListener('scroll', updateFilterNavArrows, { passive: true });
+  // Wheel-to-horizontal conversion
+  filterBar.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      filterBar.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+}
+
+/* ─── Gallery Navigation Arrows (Previous / Next) & Smooth Scrolling ─── */
+const galleryNav = document.getElementById('gallery-nav');
+const prevNavArrow = document.getElementById('nav-arrow-prev');
+const nextNavArrow = document.getElementById('nav-arrow-next');
+
+function updateGalleryNavArrows() {
+  if (!galleryNav) return;
+  const atStart = galleryNav.scrollLeft <= 4;
+  const atEnd = galleryNav.scrollLeft + galleryNav.clientWidth >= galleryNav.scrollWidth - 6;
+  if (prevNavArrow) prevNavArrow.classList.toggle('hidden', atStart);
+  if (nextNavArrow) nextNavArrow.classList.toggle('hidden', atEnd);
+}
+
+if (prevNavArrow && galleryNav) {
+  prevNavArrow.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    galleryNav.scrollBy({ left: -140, behavior: 'smooth' });
+    setTimeout(updateGalleryNavArrows, 200);
+  });
+}
+
+if (nextNavArrow && galleryNav) {
+  nextNavArrow.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    galleryNav.scrollBy({ left: 140, behavior: 'smooth' });
+    setTimeout(updateGalleryNavArrows, 200);
+  });
+}
+
+if (galleryNav) {
+  galleryNav.addEventListener('scroll', updateGalleryNavArrows, { passive: true });
+  // Wheel-to-horizontal conversion
+  galleryNav.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      galleryNav.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+}
+
+// Initial Arrow State Check
+setTimeout(() => {
+  updateFilterNavArrows();
+  updateGalleryNavArrows();
+}, 200);
+
+// Badge Overlay Picker
+document.querySelectorAll('#badge-picker .badge-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('#badge-picker .badge-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeBadge = btn.dataset.badge;
+    updateSelectionUI(window.lastSelectionData || currentSelectionCount);
+    toast(`Active Overlay: ${btn.textContent.trim()}`);
+  });
+});
+
+// Accordion Drawer Toggle
+const toolsAccordion = document.getElementById('tools-accordion');
+const toolsAccordionToggle = document.getElementById('tools-accordion-toggle');
+if (toolsAccordion && toolsAccordionToggle) {
+  toolsAccordionToggle.addEventListener('click', () => {
+    toolsAccordion.classList.toggle('open');
+  });
+}
+
+// CTA Buttons
+document.getElementById('btn-quick-fill')?.addEventListener('click', () => {
+  executeQuickFill(selectedPreset, false);
+});
+
+document.getElementById('btn-insert-stack')?.addEventListener('click', () => {
+  insertAvatarStack();
+});
+
+document.getElementById('btn-create-component')?.addEventListener('click', async () => {
+  try {
+    toast('Generating component set...');
+    const urls = generatePresetUrls(selectedPreset, activeFilter, 1);
+    const asset = await fetchAssetWithFallback(urls[0]);
+    parent.postMessage({
+      pluginMessage: {
+        type: 'create-dual-component',
+        items: [{
+          data: asset.data,
+          base64Png: asset.base64Png,
+          isSvg: asset.isSvg,
+          label: 'Avatar'
+        }]
+      }
+    }, '*');
+  } catch (err) {
+    toast('Failed to create component: ' + err.message);
+  }
+});
+
+// Gallery Category Tabs (Popular, AI Portraits, Realistic, 3D, Memoji, etc.)
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    galleryCategory = tab.dataset.cat || 'popular';
+    renderGrid(galleryCategory);
+    const container = document.getElementById('grid-container');
+    if (container) container.scrollTop = 0;
+    setTimeout(updateGalleryNavArrows, 180);
+  });
+});
+
+// Random Seed Generator
+function rollNewSeeds() {
+  globalSeedSalt = Math.floor(Math.random() * 99999);
+  renderGrid(galleryCategory);
+  toast('Rolled 1,000+ fresh avatar seeds!');
+}
+
+document.getElementById('refresh-btn').addEventListener('click', rollNewSeeds);
+document.getElementById('footer-seed-link').addEventListener('click', rollNewSeeds);
+
+document.getElementById('close-btn').addEventListener('click', () => {
+  parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+});
+
+/* ─────────────────────────────────────────────────── */
+/*  8. Figma Bridge & Headless Handler                 */
+/* ─────────────────────────────────────────────────── */
+window.onmessage = (e) => {
+  const msg = e.data?.pluginMessage;
+  if (!msg) return;
+
+  if (msg.type === 'selection') {
+    updateSelectionUI(msg);
+  }
+
+  if (msg.type === 'exec-headless-command') {
+    let preset = 'random';
+    if (msg.command === 'quick-fill-office') preset = 'office';
+    else if (msg.command === 'quick-fill-everyday') preset = 'everyday';
+    else if (msg.command === 'quick-fill-sculpted') preset = 'sculpted';
+    else if (msg.command === 'quick-fill-illustrated') preset = 'illustrated';
+    else if (msg.command === 'quick-fill-cartoon') preset = 'cartoon';
+    else if (msg.command === 'quick-fill-memoji') preset = 'memoji';
+    else if (msg.command === 'quick-fill-doodles') preset = 'doodles';
+    else if (msg.command === 'quick-fill-company') preset = 'company';
+    else if (msg.command === 'quick-fill-abstract') preset = 'abstract';
+    else if (msg.command === 'quick-fill-quiet' || msg.command === 'quick-fill-minimal') preset = 'quiet';
+    else if (msg.command === 'quick-fill-cyber') preset = 'cyber';
+    else if (msg.command === 'quick-fill-pixel') preset = 'pixel';
+    else if (msg.command === 'quick-shuffle') preset = 'random';
+
+    currentSelectionCount = msg.selectionCount || 0;
+    
+    if (msg.command === 'quick-create-component') {
+      document.getElementById('btn-create-component').click();
+    } else {
+      executeQuickFill(preset, true);
+    }
+  }
+
+  if (msg.type === 'ok') toast(msg.text);
+  if (msg.type === 'err') toast(msg.text);
+};
+
+// Initial Load
+renderGrid('popular');
+
+/* ─────────────────────────────────────────────────── */
+/*  9. Interactive First-Time Onboarding Tour          */
+/* ─────────────────────────────────────────────────── */
+let currentOnboardingStep = 0;
+const totalOnboardingSteps = 5;
+
+const caretRightSvg = '<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+const checkSvg = '<svg viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>';
+
+function showOnboarding(step = 0) {
+  currentOnboardingStep = step;
+  const overlay = document.getElementById('onboarding-overlay');
+  if (!overlay) return;
+  updateOnboardingStep();
+  overlay.classList.add('show');
+}
+
+function hideOnboarding() {
+  const overlay = document.getElementById('onboarding-overlay');
+  if (overlay) overlay.classList.remove('show');
+  try {
+    localStorage.setItem('avatarly_onboarded_v6', 'true');
+  } catch (e) {}
+}
+
+function updateOnboardingStep() {
+  const slides = document.querySelectorAll('.onboarding-slide');
+  const dots = document.querySelectorAll('.onboarding-dot');
+  const backBtn = document.getElementById('btn-onboarding-back');
+  const nextBtn = document.getElementById('btn-onboarding-next');
+
+  slides.forEach((slide, idx) => {
+    slide.classList.toggle('active', idx === currentOnboardingStep);
+  });
+
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === currentOnboardingStep);
+  });
+
+  if (backBtn) {
+    backBtn.style.display = currentOnboardingStep > 0 ? 'inline-flex' : 'none';
+  }
+
+  if (nextBtn) {
+    if (currentOnboardingStep === totalOnboardingSteps - 1) {
+      nextBtn.innerHTML = 'Start Creating ' + checkSvg;
+    } else {
+      nextBtn.innerHTML = 'Next ' + caretRightSvg;
+    }
+  }
+}
+
+document.getElementById('help-btn')?.addEventListener('click', () => {
+  showOnboarding(0);
+});
+
+document.getElementById('btn-close-onboarding')?.addEventListener('click', hideOnboarding);
+
+document.getElementById('onboarding-overlay')?.addEventListener('click', (e) => {
+  if (e.target.id === 'onboarding-overlay') hideOnboarding();
+});
+
+document.getElementById('btn-onboarding-next')?.addEventListener('click', () => {
+  if (currentOnboardingStep < totalOnboardingSteps - 1) {
+    currentOnboardingStep++;
+    updateOnboardingStep();
+  } else {
+    hideOnboarding();
+    toast('Ready to fill your designs');
+  }
+});
+
+document.getElementById('btn-onboarding-back')?.addEventListener('click', () => {
+  if (currentOnboardingStep > 0) {
+    currentOnboardingStep--;
+    updateOnboardingStep();
+  }
+});
+
+document.querySelectorAll('.onboarding-dot').forEach((dot) => {
+  dot.addEventListener('click', () => {
+    currentOnboardingStep = parseInt(dot.dataset.step, 10) || 0;
+    updateOnboardingStep();
+  });
+});
+
+try {
+  if (!localStorage.getItem('avatarly_onboarded_v6')) {
+    showOnboarding(0);
+  }
+} catch (e) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "Avatarly",
+  "id": "com.avatarly.plugin.v1",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "menu": [
+    { "name": "Quick Fill: Selected Shapes (Smart Mix)", "command": "quick-fill-random" },
+    { "name": "Quick Fill: Office Avatars (SaaS & Teams)", "command": "quick-fill-office" },
+    { "name": "Quick Fill: Everyday Avatars (Authentic People)", "command": "quick-fill-everyday" },
+    { "name": "Quick Fill: Sculpted & 3D Busts", "command": "quick-fill-sculpted" },
+    { "name": "Quick Fill: Sketch B&W", "command": "quick-fill-illustrated" },
+    { "name": "Quick Fill: Cartoon Characters", "command": "quick-fill-cartoon" },
+    { "name": "Quick Fill: Memoji Style Characters", "command": "quick-fill-memoji" },
+    { "name": "Quick Fill: Comic Color", "command": "quick-fill-doodles" },
+    { "name": "Quick Fill: Company & Brand Logos", "command": "quick-fill-company" },
+    { "name": "Quick Fill: Abstract Geometric Art", "command": "quick-fill-abstract" },
+    { "name": "Quick Fill: Quiet Minimal Placeholders", "command": "quick-fill-quiet" },
+    { "name": "Quick Fill: Cyber & Sci-Fi Robots", "command": "quick-fill-cyber" },
+    { "name": "Quick Fill: Pixel Mosaic Avatars", "command": "quick-fill-pixel" },
+    { "separator": true },
+    { "name": "Instant Re-Shuffle Selection", "command": "quick-shuffle" },
+    { "name": "Create Photo + Initials Component Set", "command": "quick-create-component" },
+    { "separator": true },
+    { "name": "Open Avatarly Studio", "command": "open-ui" }
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://cdn.jsdelivr.net",
+      "https://raw.githubusercontent.com",
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
+    ]
+  }
+}

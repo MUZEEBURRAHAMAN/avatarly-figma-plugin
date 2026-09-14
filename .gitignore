@@ -1,0 +1,11 @@
+# Separately versioned repo (MUZEEBURRAHAMAN/ui-faces-avatars) — not tracked here
+avatar-repo/
+
+# Legacy/unused scratch dataset (not referenced by the plugin)
+dataset/
+
+# Local tool state
+.impeccable/
+
+# OS
+.DS_Store
