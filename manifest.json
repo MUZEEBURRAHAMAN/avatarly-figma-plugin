@@ -5,6 +5,7 @@
   "main": "code.js",
   "ui": "ui.html",
   "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
   "menu": [
     { "name": "Quick Fill: Selected Shapes (Smart Mix)", "command": "quick-fill-random" },
     { "name": "Quick Fill: Office Avatars (SaaS & Teams)", "command": "quick-fill-office" },
