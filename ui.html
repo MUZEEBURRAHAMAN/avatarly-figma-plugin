@@ -332,7 +332,7 @@ html, body {
   align-items: center;
   gap: 6px;
   padding: 5px 10px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   font-size: 11px;
@@ -358,7 +358,6 @@ html, body {
   background: #330040;
   color: #FFFFFF;
   border-color: #330040;
-  box-shadow: 0 2px 6px rgba(51, 0, 64, 0.25);
 }
 
 /* Presets Grid (Phosphor Duotone Themed) */
@@ -2326,8 +2325,57 @@ input:checked + .slider:before { transform: translateX(12px); }
           </div>
         </div>
 
-        <!-- Slide 5: Pro Features -->
+        <!-- Slide 5: Component Sets -->
         <div class="onboarding-slide" data-slide="4">
+          <div class="onboarding-illustration">
+            <svg viewBox="0 0 320 218" fill="none">
+              <line x1="103" y1="96" x2="147" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+              <line x1="213" y1="96" x2="257" y2="96" stroke="var(--primary)" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"/>
+
+              <rect x="36" y="60" width="72" height="72" rx="18" fill="var(--primary)" opacity="0.16"/>
+              <circle cx="72" cy="96" r="20" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="4 5" opacity="0.6"/>
+              <circle cx="72" cy="96" r="13" fill="var(--primary)"/>
+              <circle cx="86" cy="110" r="9" fill="var(--success)" stroke="var(--bg-primary)" stroke-width="2.5"/>
+              <path d="M82,110 L85,113 L91,106" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <rect x="146" y="60" width="72" height="72" rx="18" fill="var(--primary)" opacity="0.16"/>
+              <circle cx="169" cy="106" r="17" fill="var(--primary)"/>
+              <circle cx="193" cy="92" r="11" fill="var(--primary)" opacity="0.7"/>
+              <circle cx="204" cy="80" r="6" fill="var(--primary)" opacity="0.45"/>
+
+              <rect x="256" y="60" width="72" height="72" rx="18" fill="var(--primary)"/>
+              <rect x="270" y="74" width="18" height="18" rx="5" fill="#FFFFFF" opacity="0.9"/>
+              <rect x="292" y="96" width="18" height="18" rx="5" fill="#FFFFFF" opacity="0.55"/>
+              <path d="M288,70 L300,70 L300,82" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <text x="72" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">States</text>
+              <text x="182" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Sizes</text>
+              <text x="292" y="158" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="var(--text-sub)" text-anchor="middle">Handoff</text>
+            </svg>
+          </div>
+          <div class="onboarding-title">Design-System Component Sets</div>
+          <div class="onboarding-desc">Turn any avatar into a real, reusable Figma component from the Components tab -- not just a flat image.</div>
+          <div class="onboarding-features-list">
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Stack -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M220,169.09l-92,53.65L36,169.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M220,121.09l-92,53.65L36,121.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M28,86.91l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,0,0,0-13.82l-96-56a8,8,0,0,0-8.06,0l-96,56a8,8,0,0,0,0,13.82Z"/></svg>
+              <span>Default, Hover, Active, Selected, and Disabled states built in</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: IdentificationCard -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><rect x="24" y="56" width="208" height="144" rx="8" opacity="0.2"/><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm-48,136H80a8,8,0,0,1-7.48-5.18,56,56,0,0,1,24-62.91A36,36,0,1,1,152.5,116a56.08,56.08,0,0,1,24,62.91A8,8,0,0,1,176,184Z"/></svg>
+              <span>Photo + Initials fallback, choose either scope or both</span>
+            </div>
+            <div class="onboarding-feature-item">
+              <!-- Duotone: Ruler -->
+              <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M226.83,74.83l-40-40a8,8,0,0,0-11.32,0l-101.34,101.34-40-40a8,8,0,0,0-11.32,0l-40,40a8,8,0,0,0,0,11.32l101.66,101.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0,0-11.32L125.49,187.15,226.83,86.15A8,8,0,0,0,226.83,74.83Z" opacity="0.2"/><path d="M229.66,77.66l-152,152a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,0-11.32l152-152a8,8,0,0,1,11.32,0l40,40A8,8,0,0,1,229.66,77.66Z"/></svg>
+              <span>Ships with a 16&ndash;120px size-scale preview, ready to hand off</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 6: Pro Features -->
+        <div class="onboarding-slide" data-slide="5">
           <div class="onboarding-illustration">
             <svg viewBox="0 0 320 218" fill="none">
               <circle cx="160" cy="104" r="58" fill="none" stroke="var(--primary)" stroke-width="4" stroke-dasharray="16 10" opacity="0.35"/>
@@ -2371,7 +2419,7 @@ input:checked + .slider:before { transform: translateX(12px); }
             <div class="onboarding-feature-item">
               <!-- Duotone: Command -->
               <svg class="fi-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M180,48a28,28,0,0,0-28,28v24H104V76A28,28,0,1,0,76,104h24v48H76a28,28,0,1,0,28,28V156h48v24a28,28,0,1,0,28-28H156V104h24a28,28,0,0,0,0-56Zm-76,56h48v48H104Zm76-24H156V76a12,12,0,1,1,24,0Zm-104,0a12,12,0,0,1,0-24V76A12,12,0,0,0,76,76h0V80Zm0,104a12,12,0,0,1,0-24h4v4A12,12,0,0,1,76,180Zm104,0a12,12,0,0,1-12-12V156h12a12,12,0,0,1,0,24Z"/></svg>
-              <span>Cmd + / quick commands and component set builder</span>
+              <span>Cmd + / quick commands for headless fills, no panel needed</span>
             </div>
           </div>
         </div>
@@ -2384,6 +2432,7 @@ input:checked + .slider:before { transform: translateX(12px); }
           <div class="onboarding-dot" data-step="2"></div>
           <div class="onboarding-dot" data-step="3"></div>
           <div class="onboarding-dot" data-step="4"></div>
+          <div class="onboarding-dot" data-step="5"></div>
         </div>
         <div class="onboarding-actions">
           <button class="onboarding-btn ghost" id="btn-onboarding-back" style="display:none;">
@@ -3221,7 +3270,7 @@ renderGrid('popular');
 /*  9. Interactive First-Time Onboarding Tour          */
 /* ─────────────────────────────────────────────────── */
 let currentOnboardingStep = 0;
-const totalOnboardingSteps = 5;
+const totalOnboardingSteps = 6;
 
 const caretRightSvg = '<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
 const checkSvg = '<svg viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>';
