@@ -1500,19 +1500,19 @@ input:checked + .slider:before { transform: translateX(12px); }
       <span>Avatarly</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="help-btn" title="Feature Tour & Guide">
+      <button class="icon-btn" id="help-btn" title="Feature Tour & Guide" aria-label="Feature Tour & Guide">
         <!-- Duotone: Question -->
         <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
           <path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36a8,8,0,0,0,16,0c0-11,10.77-20,24-20s24,9,24,20c0,9.36-7.85,17.29-19.46,24.16C120.73,139.23,120,143.43,120,148v4a8,8,0,0,0,16,0v-1.74c15.11-8.52,24-19.57,24-32.26C160,98.15,145.94,72,128,72ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>
         </svg>
       </button>
-      <button class="icon-btn" id="refresh-btn" title="Roll 1000+ Fresh Seeds">
+      <button class="icon-btn" id="refresh-btn" title="Roll 1000+ Fresh Seeds" aria-label="Roll 1000+ Fresh Seeds">
         <!-- Duotone: ArrowClockwise -->
         <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
           <path d="M224,128a96,96,0,0,1-96,96A95.77,95.77,0,0,1,58.82,185.16L40,204V144h60l-22.37,22.37A79.8,79.8,0,1,0,48.42,112.56a8,8,0,1,1-15.84-2.45A96,96,0,0,1,224,128Z"/>
         </svg>
       </button>
-      <button class="icon-btn" id="close-btn" title="Close">
+      <button class="icon-btn" id="close-btn" title="Close" aria-label="Close plugin">
         <!-- Duotone: X -->
         <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor">
           <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
@@ -2105,7 +2105,7 @@ input:checked + .slider:before { transform: translateX(12px); }
           </svg>
           <span>Getting Started</span>
         </div>
-        <button class="icon-btn" id="btn-close-onboarding" title="Skip" style="width:24px; height:24px;">
+        <button class="icon-btn" id="btn-close-onboarding" title="Skip" aria-label="Skip onboarding" style="width:24px; height:24px;">
           <svg width="13" height="13" viewBox="0 0 256 256" fill="currentColor">
             <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
           </svg>
@@ -2557,7 +2557,14 @@ function generatePresetUrls(preset, filter = 'all', count = 12) {
 
     if (REPO_COLLECTIONS[preset]) {
       const col = REPO_COLLECTIONS[preset];
-      const avatarIndex = ((salt * 13 + attempt * 7) % col.count) + 1;
+      // Step by 1 per attempt (not a multiplier like *7) so this cycles
+      // through every index for any collection size: gcd(1, N) = 1 always,
+      // guaranteeing full coverage. A step that shares a common factor
+      // with col.count (e.g. *7 against a count of 98) silently visits
+      // only count/gcd(step,count) distinct indices no matter how many
+      // attempts run — that's what capped memoji-avatars (count=98) at
+      // exactly 14 unique results regardless of how many were requested.
+      const avatarIndex = ((salt + attempt) % col.count) + 1;
       url = getRepoAvatarUrl(preset, avatarIndex);
     }
     else {
@@ -2570,7 +2577,11 @@ function generatePresetUrls(preset, filter = 'all', count = 12) {
         () => getRepoAvatarUrl('doodles', ((salt * 17 + attempt * 23) % 100) + 1),
         () => getRepoAvatarUrl('company', ((salt * 19 + attempt * 29) % 100) + 1),
         () => getRepoAvatarUrl('abstract', ((salt * 23 + attempt * 31) % 100) + 1),
-        () => getRepoAvatarUrl('quiet', ((salt * 29 + attempt * 37) % 100) + 1)
+        () => getRepoAvatarUrl('quiet', ((salt * 29 + attempt * 37) % 100) + 1),
+        () => getRepoAvatarUrl('memoji', ((salt * 31 + attempt * 41) % 100) + 1),
+        () => getRepoAvatarUrl('cyber', ((salt * 37 + attempt * 43) % 100) + 1),
+        () => getRepoAvatarUrl('pixel', ((salt * 41 + attempt * 47) % 100) + 1),
+        () => getRepoAvatarUrl('world', ((salt * 43 + attempt * 53) % 100) + 1)
       ];
       const fn = mixSources[attempt % mixSources.length];
       url = fn();
@@ -2874,7 +2885,9 @@ function renderGrid(cat) {
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'card-action-btn';
+    copyBtn.type = 'button';
     copyBtn.title = isVector ? 'Copy SVG Code' : 'Copy 4K Image URL';
+    copyBtn.setAttribute('aria-label', copyBtn.title);
     copyBtn.innerHTML = isVector
       ? `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>`
       : `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M136.37,187.66a8,8,0,0,1,0,11.31l-40,40a56,56,0,0,1-79.2-79.2l40-40a56,56,0,0,1,79.2,0,8,8,0,0,1-11.31,11.32,40,40,0,0,0-56.57,0l-40,40a40,40,0,0,0,56.57,56.57l40-40A8,8,0,0,1,136.37,187.66Zm102.83-171a56,56,0,0,0-79.2,0l-40,40a56,56,0,0,0,79.2,79.2,8,8,0,0,0,11.32-11.31,40,40,0,0,1-56.57-56.57l40-40a40,40,0,0,1,56.57,0,40.1,40.1,0,0,1,0,56.57,8,8,0,0,0,11.31,11.32A56.12,56.12,0,0,0,239.2,16.63Z"/></svg>`;
@@ -2900,7 +2913,9 @@ function renderGrid(cat) {
 
     const rollBtn = document.createElement('button');
     rollBtn.className = 'card-action-btn';
+    rollBtn.type = 'button';
     rollBtn.title = 'Re-roll this tile';
+    rollBtn.setAttribute('aria-label', rollBtn.title);
     rollBtn.innerHTML = `<svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a96,96,0,0,1-96,96A95.77,95.77,0,0,1,58.82,185.16L40,204V144h60l-22.37,22.37A79.8,79.8,0,1,0,48.42,112.56a8,8,0,1,1-15.84-2.45A96,96,0,0,1,224,128Z"/></svg>`;
     rollBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -3205,10 +3220,10 @@ function rollNewSeeds() {
   toast('Rolled 1,000+ fresh avatar seeds!');
 }
 
-document.getElementById('refresh-btn').addEventListener('click', rollNewSeeds);
-document.getElementById('footer-seed-link').addEventListener('click', rollNewSeeds);
+document.getElementById('refresh-btn')?.addEventListener('click', rollNewSeeds);
+document.getElementById('footer-seed-link')?.addEventListener('click', rollNewSeeds);
 
-document.getElementById('close-btn').addEventListener('click', () => {
+document.getElementById('close-btn')?.addEventListener('click', () => {
   parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
 });
 
@@ -3234,7 +3249,7 @@ window.onmessage = (e) => {
     else if (msg.command === 'quick-fill-doodles') preset = 'doodles';
     else if (msg.command === 'quick-fill-company') preset = 'company';
     else if (msg.command === 'quick-fill-abstract') preset = 'abstract';
-    else if (msg.command === 'quick-fill-quiet' || msg.command === 'quick-fill-minimal') preset = 'quiet';
+    else if (msg.command === 'quick-fill-quiet') preset = 'quiet';
     else if (msg.command === 'quick-fill-cyber') preset = 'cyber';
     else if (msg.command === 'quick-fill-pixel') preset = 'pixel';
     else if (msg.command === 'quick-fill-world') preset = 'world';
