@@ -2468,18 +2468,6 @@ input:checked + .slider:before { transform: translateX(12px); }
 const REPO_CDN_BASE = 'https://cdn.jsdelivr.net/gh/MUZEEBURRAHAMAN/ui-faces-avatars@main/collections/';
 const REPO_RAW_BASE = 'https://raw.githubusercontent.com/MUZEEBURRAHAMAN/ui-faces-avatars/main/collections/';
 
-// Bump this whenever CDN assets are regenerated so browsers stop serving
-// stale cached copies of previously-broken images (jsDelivr sets long
-// cache lifetimes, so a server-side fix alone doesn't reach clients that
-// already fetched the old file once).
-const ASSET_CACHE_VERSION = 'v2';
-function withCacheBust(url) {
-  if (typeof url === 'string' && (url.startsWith(REPO_CDN_BASE) || url.startsWith(REPO_RAW_BASE))) {
-    return url + (url.includes('?') ? '&' : '?') + 'cb=' + ASSET_CACHE_VERSION;
-  }
-  return url;
-}
-
 const REPO_COLLECTIONS = {
   office: { id: 'office-avatars', count: 100, name: 'Office Avatars' },
   everyday: { id: 'everyday-avatars', count: 100, name: 'Everyday Avatars' },
@@ -2658,16 +2646,15 @@ async function fetchAssetWithFallback(url) {
   try {
     let res;
     try {
-      res = await tryFetch(withCacheBust(url));
+      res = await tryFetch(url);
     } catch (e) {
       if (url.includes(REPO_CDN_BASE)) {
-        try {
-          const localUrl = url.replace(REPO_CDN_BASE, 'avatar-repo/collections/');
-          res = await tryFetch(localUrl);
-        } catch {
-          const rawUrl = url.replace(REPO_CDN_BASE, REPO_RAW_BASE);
-          res = await tryFetch(withCacheBust(rawUrl));
-        }
+        // jsDelivr failed — retry against raw.githubusercontent.com, a
+        // genuinely independent path (already allow-listed in the plugin
+        // manifest) rather than a relative local path that only resolves
+        // during local file:// testing and is unreachable once published.
+        const rawUrl = url.replace(REPO_CDN_BASE, REPO_RAW_BASE);
+        res = await tryFetch(rawUrl);
       } else {
         throw e;
       }
@@ -2852,7 +2839,7 @@ function renderGrid(cat) {
     const img = document.createElement('img');
     img.className = 'avatar-img';
     img.loading = 'lazy';
-    img.src = withCacheBust(currentUrl);
+    img.src = currentUrl;
     img.alt = 'Avatar';
 
     img.onload = () => {
@@ -2861,13 +2848,17 @@ function renderGrid(cat) {
     };
     img.onerror = () => {
       if (currentUrl.includes(REPO_CDN_BASE)) {
-        const localFallback = currentUrl.replace(REPO_CDN_BASE, 'avatar-repo/collections/');
+        // jsDelivr load failed (transient network blip, rate limit, etc.) —
+        // retry against raw.githubusercontent.com, a genuinely independent
+        // path that's already allow-listed in the plugin manifest, before
+        // giving up to the offline placeholder.
+        const rawFallback = currentUrl.replace(REPO_CDN_BASE, REPO_RAW_BASE);
         img.onerror = () => {
           img.src = `data:image/svg+xml;utf8,${encodeURIComponent(generateOfflineSvg(currentUrl))}`;
           img.classList.add('loaded');
           card.classList.remove('loading');
         };
-        img.src = localFallback;
+        img.src = rawFallback;
         return;
       }
       img.src = `data:image/svg+xml;utf8,${encodeURIComponent(generateOfflineSvg(currentUrl))}`;
@@ -2930,7 +2921,7 @@ function renderGrid(cat) {
       card.classList.add('loading');
       img.classList.remove('loaded');
       currentUrl = freshUrl;
-      img.src = withCacheBust(freshUrl);
+      img.src = freshUrl;
       toast('Re-rolled avatar tile');
     });
 
