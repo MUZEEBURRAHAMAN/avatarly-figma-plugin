@@ -371,6 +371,172 @@ async function createPhotoInitialsComponentSet(item, persona = PERSONAS[0], size
   return componentSet;
 }
 
+// 📦 3. Design-System Component Set Generator (Content x State variants + size scale)
+async function generateComponentSet(item, scope, setName) {
+  await figma.loadFontAsync({ family: "Inter", style: "Regular" }).catch(() => {});
+
+  let boldFont = { family: "Inter", style: "Regular" };
+  try {
+    await figma.loadFontAsync({ family: "Archivo", style: "Bold" });
+    boldFont = { family: "Archivo", style: "Bold" };
+  } catch {
+    try {
+      await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+      boldFont = { family: "Inter", style: "Bold" };
+    } catch {}
+  }
+
+  const size = 96;
+  const pad = 10;
+  const total = size + pad * 2;
+  const states = ['Default', 'Hover', 'Active', 'Selected', 'Disabled'];
+  const contents = scope === 'photo' ? ['Photo'] : scope === 'initials' ? ['Initials'] : ['Photo', 'Initials'];
+  const multiAxis = contents.length > 1;
+
+  const persona = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
+  const initials = persona.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const img = item.base64Png ? createImageFromBytes(item.base64Png) : null;
+
+  const primaryColor = { r: 0.537, g: 0, b: 0.682 };
+  const initialsBg = { r: 0.984, g: 0.941, b: 0.992 };
+
+  const variants = [];
+  contents.forEach((content, col) => {
+    states.forEach((state, row) => {
+      const comp = figma.createComponent();
+      comp.name = multiAxis ? `Content=${content}, State=${state}` : `State=${state}`;
+      comp.resize(total, total);
+      comp.fills = [];
+      comp.cornerSmoothing = 1.0;
+
+      const circle = figma.createEllipse();
+      circle.resize(size, size);
+      circle.x = pad;
+      circle.y = pad;
+
+      if (content === 'Photo') {
+        circle.name = 'Image';
+        circle.fills = img
+          ? [{ type: 'IMAGE', scaleMode: 'FILL', imageHash: img.hash }]
+          : [{ type: 'SOLID', color: { r: 0.89, g: 0.91, b: 0.94 } }];
+      } else {
+        circle.name = 'Background';
+        circle.fills = [{ type: 'SOLID', color: initialsBg }];
+      }
+      comp.appendChild(circle);
+
+      if (content === 'Initials') {
+        const text = figma.createText();
+        text.name = 'Initials';
+        try { text.fontName = boldFont; } catch {}
+        text.characters = initials;
+        text.fontSize = Math.round(size * 0.34);
+        text.fills = [{ type: 'SOLID', color: primaryColor }];
+        text.textAlignHorizontal = 'CENTER';
+        text.textAlignVertical = 'CENTER';
+        text.resize(size, size);
+        text.x = pad;
+        text.y = pad;
+        comp.appendChild(text);
+      }
+
+      if (state === 'Hover') {
+        const ring = figma.createEllipse();
+        ring.name = 'Hover Ring';
+        ring.resize(total, total);
+        ring.fills = [];
+        ring.strokes = [{ type: 'SOLID', color: primaryColor }];
+        ring.strokeWeight = 2;
+        ring.opacity = 0.45;
+        comp.appendChild(ring);
+      } else if (state === 'Active') {
+        const overlay = figma.createEllipse();
+        overlay.name = 'Active Overlay';
+        overlay.resize(size, size);
+        overlay.x = pad;
+        overlay.y = pad;
+        overlay.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 }, opacity: 0.18 }];
+        comp.appendChild(overlay);
+      } else if (state === 'Selected') {
+        const ring = figma.createEllipse();
+        ring.name = 'Selected Ring';
+        ring.resize(total, total);
+        ring.fills = [];
+        ring.strokes = [{ type: 'SOLID', color: primaryColor }];
+        ring.strokeWeight = 3;
+        comp.appendChild(ring);
+
+        const bSize = Math.round(size * 0.3);
+        const badgeSvg = `<svg width="${bSize}" height="${bSize}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#8900AE"/><circle cx="12" cy="12" r="11" stroke="#FFFFFF" stroke-width="2"/><path d="M7.5 12.2L10.3 15L16.5 8.8" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        const badge = figma.createNodeFromSvg(badgeSvg);
+        badge.name = 'Selected Badge';
+        badge.x = pad + size - bSize;
+        badge.y = pad + size - bSize;
+        comp.appendChild(badge);
+      } else if (state === 'Disabled') {
+        comp.opacity = 0.4;
+      }
+
+      comp.x = col * (total + 32);
+      comp.y = row * (total + 32);
+      variants.push(comp);
+    });
+  });
+
+  const componentSet = figma.combineAsVariants(variants, figma.currentPage);
+  componentSet.name = setName;
+  componentSet.cornerSmoothing = 1.0;
+
+  // Size-scale preview row so the avatar's legibility can be checked at
+  // every size it will actually ship at, before anyone hands it off.
+  const sizes = [16, 24, 32, 40, 56, 80, 120];
+  const scaleRow = figma.createFrame();
+  scaleRow.name = `${setName} / Size Scale`;
+  scaleRow.fills = [];
+  scaleRow.layoutMode = 'HORIZONTAL';
+  scaleRow.itemSpacing = 28;
+  scaleRow.counterAxisAlignItems = 'MAX';
+  scaleRow.primaryAxisSizingMode = 'AUTO';
+  scaleRow.counterAxisSizingMode = 'AUTO';
+
+  for (const s of sizes) {
+    const cell = figma.createFrame();
+    cell.name = `${s}px`;
+    cell.fills = [];
+    cell.layoutMode = 'VERTICAL';
+    cell.itemSpacing = 6;
+    cell.counterAxisAlignItems = 'CENTER';
+    cell.primaryAxisSizingMode = 'AUTO';
+    cell.counterAxisSizingMode = 'AUTO';
+
+    const preview = figma.createEllipse();
+    preview.name = 'Preview';
+    preview.resize(s, s);
+    preview.fills = img
+      ? [{ type: 'IMAGE', scaleMode: 'FILL', imageHash: img.hash }]
+      : [{ type: 'SOLID', color: initialsBg }];
+    cell.appendChild(preview);
+
+    const label = figma.createText();
+    label.name = 'Label';
+    try { label.fontName = { family: 'Inter', style: 'Regular' }; } catch {}
+    label.characters = `${s}px`;
+    label.fontSize = 10;
+    label.fills = [{ type: 'SOLID', color: { r: 0.42, g: 0.45, b: 0.51 } }];
+    cell.appendChild(label);
+
+    scaleRow.appendChild(cell);
+  }
+
+  scaleRow.x = componentSet.x;
+  scaleRow.y = componentSet.y + componentSet.height + 40;
+  figma.currentPage.appendChild(scaleRow);
+
+  figma.currentPage.selection = [componentSet, scaleRow];
+  figma.viewport.scrollAndZoomIntoView([componentSet, scaleRow]);
+  return componentSet;
+}
+
 // Check if headless command
 const isHeadless = typeof command === 'string' && command.startsWith('quick-');
 const hasSelection = figma.currentPage.selection.length > 0;
@@ -530,6 +696,16 @@ figma.ui.onmessage = async function(msg) {
       await createPhotoInitialsComponentSet(item, persona, 64);
       figma.notify('📦 Created "Avatar / User Profile" Design System Component Set!');
       figma.ui.postMessage({ type: 'ok', text: 'Created Component Set with Photo & Initials!' });
+    }
+
+    else if (msg.type === 'generate-component-set') {
+      const item = msg.item;
+      if (!item) throw new Error('No item provided');
+      const scope = ['both', 'photo', 'initials'].includes(msg.scope) ? msg.scope : 'both';
+      const name = (typeof msg.name === 'string' && msg.name.trim()) || 'User Avatar';
+      await generateComponentSet(item, scope, name);
+      figma.notify(`📦 Generated "${name}" component set with size scale!`);
+      figma.ui.postMessage({ type: 'ok', text: `Generated "${name}" component set!` });
     }
 
     else if (msg.type === 'apply-avatar') {

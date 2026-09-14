@@ -1325,6 +1325,152 @@ input:checked + .slider:before { transform: translateX(12px); }
   width: 12px;
   height: 12px;
 }
+
+/* ─── Components Tab ─────────────────────────────────── */
+.comp-intro {
+  margin-bottom: 16px;
+}
+
+.comp-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+
+.comp-desc {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-sub);
+}
+
+.scope-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.scope-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.scope-option:hover {
+  border-color: #CBD5E1;
+  background: var(--bg-secondary);
+}
+
+.scope-option.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.scope-radio {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.scope-option.active .scope-radio {
+  border-color: var(--primary);
+}
+
+.scope-option.active .scope-radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+.scope-meta {
+  min-width: 0;
+}
+
+.scope-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-main);
+}
+
+.scope-sub {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.comp-name-field {
+  margin-bottom: 16px;
+}
+
+.comp-name-input-wrap {
+  position: relative;
+}
+
+.comp-name-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 46px 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-main);
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.comp-name-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.comp-name-count {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.comp-preview-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--text-sub);
+  margin-bottom: 16px;
+}
+
+.comp-preview-note svg {
+  width: 15px;
+  height: 15px;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 0.5px;
+}
 </style>
 </head>
 <body>
@@ -1385,7 +1531,7 @@ input:checked + .slider:before { transform: translateX(12px); }
         <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="currentColor" opacity="0.2"/>
         <path d="M160,16,40,152h80l-24,88,120-136H136Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
       </svg>
-      Quick Add & Auto-Fill
+      Quick Add
     </button>
     <button class="mode-tab" id="tab-gallery" data-screen="gallery">
       <!-- Phosphor Duotone: SquaresFour -->
@@ -1399,7 +1545,19 @@ input:checked + .slider:before { transform: translateX(12px); }
         <rect x="48" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
         <rect x="144" y="144" width="64" height="64" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
       </svg>
-      Browse Gallery
+      Gallery
+    </button>
+    <button class="mode-tab" id="tab-components" data-screen="components">
+      <!-- Phosphor Duotone: Component (diamond cluster) -->
+      <svg viewBox="0 0 256 256">
+        <rect x="32" y="32" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
+        <rect x="32" y="32" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <rect x="144" y="144" width="80" height="80" rx="12" fill="currentColor" opacity="0.2"/>
+        <rect x="144" y="144" width="80" height="80" rx="12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <polygon points="184 32 224 104 144 104 184 32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+        <circle cx="72" cy="184" r="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="18"/>
+      </svg>
+      Components
     </button>
   </nav>
 
@@ -1874,6 +2032,63 @@ input:checked + .slider:before { transform: translateX(12px); }
       <main class="grid-container" id="grid-container">
         <div class="avatar-grid" id="avatar-grid"></div>
       </main>
+    </div>
+
+    <!-- Screen 3: Component Set Builder -->
+    <div class="screen" id="screen-components">
+      <div class="quick-view">
+
+        <div class="comp-intro">
+          <div class="comp-title">Create component set</div>
+          <div class="comp-desc">Generate a Photo + Initials component set from your current style selection, with Default, Hover, Active, Selected, and Disabled states plus a ready-to-use size scale.</div>
+        </div>
+
+        <div class="section-label"><span>Scope</span></div>
+        <div class="scope-options" id="scope-options">
+          <div class="scope-option active" data-scope="both">
+            <span class="scope-radio"></span>
+            <span class="scope-meta">
+              <div class="scope-name">Photo + Initials (All states)</div>
+              <div class="scope-sub">Default, hover, active, selected, disabled</div>
+            </span>
+          </div>
+          <div class="scope-option" data-scope="photo">
+            <span class="scope-radio"></span>
+            <span class="scope-meta">
+              <div class="scope-name">Photo only</div>
+              <div class="scope-sub">Avatar images only</div>
+            </span>
+          </div>
+          <div class="scope-option" data-scope="initials">
+            <span class="scope-radio"></span>
+            <span class="scope-meta">
+              <div class="scope-name">Initials only</div>
+              <div class="scope-sub">Text-based avatars only</div>
+            </span>
+          </div>
+        </div>
+
+        <div class="section-label"><span>Component name</span></div>
+        <div class="comp-name-field">
+          <div class="comp-name-input-wrap">
+            <input type="text" class="comp-name-input" id="comp-name-input" maxlength="50" value="User Avatar" placeholder="Component name">
+            <span class="comp-name-count" id="comp-name-count">11/50</span>
+          </div>
+        </div>
+
+        <div class="comp-preview-note">
+          <!-- Duotone: Info -->
+          <svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" opacity="0.4"/><circle cx="128" cy="80" r="12"/><rect x="120" y="112" width="16" height="72" rx="8"/></svg>
+          <span>Includes a size-scale preview (16&ndash;120px) so you can confirm the avatar holds up at every size before it ships.</span>
+        </div>
+
+        <button class="primary-btn" id="btn-generate-component-set">
+          <!-- Duotone: Stack -->
+          <svg viewBox="0 0 256 256" fill="currentColor"><path d="M220,169.09l-92,53.65L36,169.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M220,121.09l-92,53.65L36,121.09a8,8,0,0,0-8,13.82l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,1,0-8.06-13.82Z"/><path d="M28,86.91l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,0,0,0-13.82l-96-56a8,8,0,0,0-8.06,0l-96,56a8,8,0,0,0,0,13.82Z"/></svg>
+          Generate component set
+        </button>
+
+      </div>
     </div>
 
   </div>
@@ -2904,6 +3119,57 @@ document.getElementById('btn-create-component')?.addEventListener('click', async
     }, '*');
   } catch (err) {
     toast('Failed to create component: ' + err.message);
+  }
+});
+
+/* ─────────────────────────────────────────────────── */
+/*  Component Set Builder (Components tab)             */
+/* ─────────────────────────────────────────────────── */
+let selectedScope = 'both';
+
+document.querySelectorAll('.scope-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.scope-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    selectedScope = opt.dataset.scope;
+  });
+});
+
+const compNameInput = document.getElementById('comp-name-input');
+const compNameCount = document.getElementById('comp-name-count');
+function updateCompNameCount() {
+  if (compNameInput && compNameCount) {
+    compNameCount.textContent = `${compNameInput.value.length}/50`;
+  }
+}
+compNameInput?.addEventListener('input', updateCompNameCount);
+updateCompNameCount();
+
+document.getElementById('btn-generate-component-set')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btn-generate-component-set');
+  const name = (compNameInput?.value || 'User Avatar').trim() || 'User Avatar';
+  try {
+    btn.disabled = true;
+    toast('Generating component set...');
+    const urls = generatePresetUrls(selectedPreset, activeFilter, 1);
+    const asset = await fetchAssetWithFallback(urls[0]);
+    parent.postMessage({
+      pluginMessage: {
+        type: 'generate-component-set',
+        scope: selectedScope,
+        name,
+        item: {
+          data: asset.data,
+          base64Png: asset.base64Png,
+          isSvg: asset.isSvg,
+          label: 'Avatar'
+        }
+      }
+    }, '*');
+  } catch (err) {
+    toast('Failed to create component set: ' + err.message);
+  } finally {
+    btn.disabled = false;
   }
 });
 
